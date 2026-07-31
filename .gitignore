@@ -1,0 +1,27 @@
+# Build products
+build/
+*.o
+*.a
+*.out
+*.err
+*.log
+/sim/htsim_uec
+/idmap.txt
+/logout.dat
+/.orderedchaos-work/
+/results/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Slurm and downloaded temporary files
+slurm-*.out
+slurm-*.err
+*.part
+
+# Editor files
+.vscode/
+.idea/
+.DS_Store

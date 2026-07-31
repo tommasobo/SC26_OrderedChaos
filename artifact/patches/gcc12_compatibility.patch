@@ -1,0 +1,11 @@
+diff --git a/sim/utils/circular_buffer.h b/sim/utils/circular_buffer.h
+--- a/sim/utils/circular_buffer.h
++++ b/sim/utils/circular_buffer.h
+@@ -10,3 +10,4 @@
+ #include <assert.h>
+ 
++#include <cstddef>
+ #include <vector>
+@@ -37,1 +38,1 @@ public:
+-            size_t newsize = _size * 2;
++            std::size_t newsize = _size * 2;

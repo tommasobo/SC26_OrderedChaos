@@ -1,0 +1,21 @@
+{
+    "data_dir": "/tmp/",
+    "filters": [
+        {
+            "regex": "globalInfo",
+            "enabled": false
+        },
+        {
+            "regex": "flowsInfo",
+            "enabled": false
+        },
+        {
+            "regex": "sinkStats",
+            "enabled": false
+        },
+        {
+            "regex": ".*",
+            "enabled": false
+        }
+    ]
+}
