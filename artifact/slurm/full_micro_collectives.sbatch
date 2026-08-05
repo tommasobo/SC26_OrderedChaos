@@ -29,6 +29,7 @@ mkdir -p "${MEASURE}"
 results=(figure7a figure7b)
 variants=(paper_configuration paper_configuration)
 WORKERS="${ORDEREDCHAOS_WORKERS:-48}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 local_mode="${ORDEREDCHAOS_LOCAL:-0}"
 pids=()
 run_result() {
@@ -36,6 +37,7 @@ run_result() {
     local variant=$2
     /usr/bin/time -v -o "${MEASURE}/${result}-${variant}.time" \
         "${PYTHON}" artifact/scripts/run_simulation_matrix.py \
+        --binary "${BINARY}" \
         --result "${result}" --variant "${variant}" \
         --output-root "${ROOT}" --workers "${WORKERS}" \
         > "${MEASURE}/${result}-${variant}.out" \

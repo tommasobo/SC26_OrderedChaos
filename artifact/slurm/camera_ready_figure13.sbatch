@@ -13,7 +13,7 @@ set -euo pipefail
 cd "${SLURM_SUBMIT_DIR}"
 LOCAL_MODE="${ORDEREDCHAOS_LOCAL:-0}"
 WORKERS="${ORDEREDCHAOS_WORKERS:-8}"
-cmake --build build --parallel "${WORKERS}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 ROOT="${SCRATCH}/orderedchaos_ae/raw/camera-ready-figure13-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/camera-ready-figure13-${SLURM_JOB_ID}"
 mkdir -p "${MEASURE}"
@@ -36,6 +36,7 @@ run_case() {
     local drop_dir="${drop}"
     /usr/bin/time -v -o "${MEASURE}/${slug}.time" \
         python3 artifact/scripts/run_sensitivity_matrix.py \
+        --binary "${BINARY}" \
         --variant "${variant}" --seed "${seed}" --drop-rate "${drop}" \
         --output-root "${ROOT}/${variant}/seed${seed}/drop${drop_dir}" \
         --workers "${WORKERS}" \

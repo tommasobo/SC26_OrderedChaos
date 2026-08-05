@@ -14,10 +14,12 @@ cd "${SLURM_SUBMIT_DIR}"
 ROOT="${SCRATCH}/orderedchaos_ae/raw/figure6-full-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure6-full-${SLURM_JOB_ID}"
 WORKERS="${ORDEREDCHAOS_WORKERS:-64}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 mkdir -p "${MEASURE}"
 
 /usr/bin/time -v -o "${MEASURE}/paper_configuration.time" \
     python3 scripts/regenerate_pfld_probe_headroom_multiseed.py \
+    --binary "${BINARY}" \
     --num-seeds 50 --jobs "${WORKERS}" --drop-rate 0.00005 \
     --sim-out-root "${ROOT}/paper_configuration/raw" \
     --figure-dir "${ROOT}/paper_configuration/plots" \

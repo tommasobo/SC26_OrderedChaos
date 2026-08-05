@@ -24,6 +24,16 @@ and is convenient for the short check on a laptop or workstation. Slurm is
 recommended for the full workflow because independent experiment groups can
 run concurrently. Neither backend requires a GPU.
 
+The final artifact uses one freshly built simulator binary for every baseline.
+Its PFLD configuration makes three narrowly scoped changes: proactive probe
+headers use reserved space in the existing low-priority queue, a switch drops a
+redundant proactive probe when the paired packet has already produced explicit
+trim/NACK evidence at that queue, and retransmissions are sent before optional
+probes. Figures 7--12 and both camera-ready experiments use a proactive probe
+interval of one data packet (`X=1`); experiments outside that scope retain the
+original artifact configuration. These choices are recorded in
+`artifact/config/paper_experiments.json`.
+
 Archived artifact: [https://doi.org/10.5281/zenodo.21542397](https://doi.org/10.5281/zenodo.21542397)
 
 ## Requirements
@@ -44,7 +54,7 @@ concurrently.
 ## Reproduce locally
 
 ```bash
-git clone https://github.com/tommasobo/SC26_OrderedChaos.git
+git clone --branch final-artifact https://github.com/tommasobo/SC26_OrderedChaos.git
 cd SC26_OrderedChaos
 ./reproduce.sh short
 ```

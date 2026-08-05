@@ -68,6 +68,7 @@ CASES = (
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, default=BIN)
     parser.add_argument("--positive-drop-rate", type=float, required=True)
     parser.add_argument("--seed", type=int, default=5)
     parser.add_argument(
@@ -108,7 +109,7 @@ def expand_seeds(spec: str, fallback: int) -> list[int]:
 
 def command(case: Case, args: argparse.Namespace, metrics: Path, seed: int) -> list[str]:
     command_line = [
-        str(BIN),
+        str(args.binary),
         "-data_collection_config", str(REPO / "scripts/metrics_collection_policies/collect_default.json"),
         "-end", "10000", "-seed", str(seed),
         "-tm", str(REPO / "scripts/connection_matrices/example_motiv_64_8_2502656.cm"),
@@ -191,7 +192,7 @@ def run_one(case: Case, seed: int, args: argparse.Namespace) -> dict[str, object
     with log.open("w", encoding="utf-8") as stdout, err.open("w", encoding="utf-8") as stderr:
         process = subprocess.Popen(
             ["/usr/bin/time", "-v", "-o", str(timing_path), *cmd],
-            cwd=REPO, stdout=stdout, stderr=stderr, start_new_session=True,
+            cwd=run_dir, stdout=stdout, stderr=stderr, start_new_session=True,
         )
         try:
             returncode = process.wait(timeout=args.timeout_seconds)
@@ -203,6 +204,7 @@ def run_one(case: Case, seed: int, args: argparse.Namespace) -> dict[str, object
             except subprocess.TimeoutExpired:
                 os.killpg(process.pid, signal.SIGKILL)
                 process.wait()
+    (run_dir / "logout.dat").unlink(missing_ok=True)
     elapsed = time.monotonic() - started
     if not timed_out and returncode != 0:
         raise RuntimeError(f"{case.name} failed with exit code {returncode}")
@@ -339,12 +341,14 @@ def main() -> int:
     seeds = expand_seeds(args.seeds, args.seed)
     if args.output_root.exists():
         raise SystemExit(f"Refusing existing output root: {args.output_root}")
-    if not BIN.is_file():
-        raise SystemExit(f"Missing simulator binary: {BIN}")
+    args.binary = args.binary.resolve()
+    if not args.binary.is_file():
+        raise SystemExit(f"Missing simulator binary: {args.binary}")
     args.output_root.mkdir(parents=True)
     provenance = {
         "paper_element": "Figure 1B",
         "positive_drop_rate": args.positive_drop_rate,
+        "binary": str(args.binary),
         "seeds": seeds,
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
     }

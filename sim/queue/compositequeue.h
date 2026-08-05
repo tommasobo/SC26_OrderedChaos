@@ -11,7 +11,10 @@
 #define QUEUE_LOW 1
 #define QUEUE_HIGH 2
 
+#include <cassert>
 #include <list>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "event_source.h"
 #include "eventlist.h"
@@ -38,6 +41,13 @@ public:
     virtual void doNextEvent();
     // should really be private, but loggers want to see
     mem_b _queuesize_low, _queuesize_high;
+
+    mem_b reservedProbeBytes() const { return _reserved_probe_bytes; }
+
+    mem_b regularLowQueueBytes() const {
+        assert(_queuesize_low >= _reserved_probe_bytes);
+        return _queuesize_low - _reserved_probe_bytes;
+    }
 
     int num_headers() const { return _num_headers; }
 
@@ -98,6 +108,8 @@ public:
     
     static int _fail_psn_num;  // number of packets that fail to be sent (for debugging)
     static bool _probe_high_priority;  // if true, TLP probes skip random/overflow drops
+    static bool _coalesce_trimmed_pfld_probe;
+    static uint64_t _coalesced_pfld_probe_count;
 
 protected:
     // Mechanism
@@ -118,9 +130,14 @@ protected:
     // marking.
     mem_b _ecn_minthresh;
     mem_b _ecn_maxthresh;
+    mem_b _reserved_probe_bytes;
 
     uint16_t _trim_size;
     std::unordered_map<uint32_t, bool> dropped_flows; // Key: flow ID, Value: true if PSN dropped
+    std::unordered_set<uint64_t> _trimmed_pfld_probe_keys;
+
+    void rememberTrimmedPfldProbe(const Packet& pkt);
+    bool consumeTrimmedPfldProbe(const Packet& pkt);
 
     bool _return_to_sender;
 

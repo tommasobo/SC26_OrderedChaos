@@ -62,6 +62,7 @@ public:
         p->_epsn            = epsn;
         p->_packet_type     = pkttype;
         p->_pflr_probe_type = PflrProbeType::NOT_PROBE;
+        p->_has_paired_pfld_probe = false;
         if (pkttype == UecBasePacket::PROBE) {
             p->_pflr_probe_type = PflrProbeType::SECTION_END;
         }
@@ -135,6 +136,10 @@ public:
         _pflr_probe_type = pflr_probe_type;
     }
 
+    inline bool has_paired_pfld_probe() const { return _has_paired_pfld_probe; }
+
+    inline void set_has_paired_pfld_probe(bool value) { _has_paired_pfld_probe = value; }
+
     inline int32_t trim_hop() const { return _trim_hop; }
 
     inline packet_direction trim_direction() const { return _trim_direction; }
@@ -167,6 +172,7 @@ protected:
 
     PacketType    _packet_type;
     PflrProbeType _pflr_probe_type;
+    bool           _has_paired_pfld_probe;
 
     // trim information, need to see if this stays here or goes to separate header.
     int32_t                        _trim_hop;

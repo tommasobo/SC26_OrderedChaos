@@ -11,12 +11,12 @@
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR}"
 
-SOURCE="${SCRATCH}/orderedchaos_ae/worktrees/trace_source/build/htsim_uec"
 ROOT="${SCRATCH}/orderedchaos_ae/raw/figure11-trace-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure11-trace-${SLURM_JOB_ID}"
 LOCAL_MODE="${ORDEREDCHAOS_LOCAL:-0}"
 SOURCE_WORKERS="${ORDEREDCHAOS_WORKERS:-7}"
 RACK_WORKERS=2
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 if [[ "${LOCAL_MODE}" == "1" ]]; then
     RACK_WORKERS=1
 fi
@@ -39,7 +39,7 @@ pids=()
 run_source() {
     /usr/bin/time -v -o "${MEASURE}/source.time" \
         python3 artifact/scripts/run_simulation_matrix.py \
-        --binary "${SOURCE}" --result figure11 --variant paper_configuration \
+        --binary "${BINARY}" --result figure11 --variant paper_configuration \
         --algorithms ecmp,flowbender,flowlet,oblivious,reps,rss,rss1 \
         --output-root "${ROOT}/source" --workers "${SOURCE_WORKERS}" \
         > "${MEASURE}/source.out" 2> "${MEASURE}/source.err"
@@ -48,6 +48,7 @@ run_source() {
 run_rack() {
     /usr/bin/time -v -o "${MEASURE}/rack.time" \
         python3 artifact/scripts/run_simulation_matrix.py \
+        --binary "${BINARY}" \
         --result figure11 --variant paper_configuration \
         --algorithms rss_rack_tlp --output-root "${ROOT}/rack" \
         --workers "${RACK_WORKERS}" \

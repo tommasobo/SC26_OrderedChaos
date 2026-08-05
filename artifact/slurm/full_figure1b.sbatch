@@ -19,16 +19,19 @@ fi
 ROOT="${SCRATCH}/orderedchaos_ae/raw/figure1b-full-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure1b-full-${SLURM_JOB_ID}"
 WORKERS="${ORDEREDCHAOS_WORKERS:-24}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 mkdir -p "${ROOT}" "${MEASURE}"
 
 /usr/bin/time -v -o "${MEASURE}/figure1b.time" \
     "${PYTHON}" artifact/scripts/run_figure1b.py \
+    --binary "${BINARY}" \
     --output-root "${ROOT}/figure1b-seeds-1-20" \
     --positive-drop-rate 0.00005 --seeds 1-20 --workers "${WORKERS}" \
     --timeout-seconds 60 \
     > "${MEASURE}/figure1b.out" 2> "${MEASURE}/figure1b.err"
 
 "${PYTHON}" artifact/scripts/run_figure1b.py \
+    --binary "${BINARY}" \
     --output-root "${ROOT}/figure1b-pooled" \
     --raw-source-root "${ROOT}/figure1b-seeds-1-20" \
     --positive-drop-rate 0.00005 --seeds 1-20

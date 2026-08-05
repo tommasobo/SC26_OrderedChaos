@@ -2474,14 +2474,15 @@ void UecSrc::sendIfPermitted() {
 /*     cout << timeAsUs(eventlist().now()) << " flow " << _flow.flow_id() << " cwnd " << _cwnd << endl;
  */    // send if the NIC, credit and window allow.
     // enqueueDynamicProactiveProbe();
-    if (_probe_queue.empty() && (_receiver_based_cc && credit() <= 0)) {
+    const bool probe_is_next = _rtx_queue.empty() && !_probe_queue.empty();
+    if (!probe_is_next && (_receiver_based_cc && credit() <= 0)) {
         // can send if we have *any* credit, but we don't
         return;
     }
     // cout << timeAsUs(eventlist().now()) << " " << nodename() << " FOO " << _cwnd << " " <<
     // _in_flight << endl;
     mem_b next_packet_size = getNextPacketSize();
-    if (_probe_queue.empty() && _sender_based_cc) {
+    if (!probe_is_next && _sender_based_cc) {
         if (!can_send_NSCC(next_packet_size)) {
             return;
         }
@@ -2541,10 +2542,11 @@ void UecSrc::sendIfPermitted() {
 // we will likely be sending something (sendNewPacket can return 0 if
 // we only had speculative credit we're not allowed to use though)
 mem_b UecSrc::sendPacket(const Route& route) {
-    if (!_probe_queue.empty()) {
-        return sendProbePacket(route);
-    } else if (!_rtx_queue.empty()) {
+    // Loss recovery has priority over optional diagnostic probes.
+    if (!_rtx_queue.empty()) {
         return sendRtxPacket(route);
+    } else if (!_probe_queue.empty()) {
+        return sendProbePacket(route);
     } else {
         return sendNewPacket(route);
     }
@@ -3511,6 +3513,7 @@ mem_b UecSrc::sendNewPacket(const Route& route) {
                         assert(ev == _current_evs[current_psn % UecSrc::getNoSlots()]);
                     }
                     enqueueProbe(current_psn, ev, UecDataPacket::PROACTIVE_DATA);
+                    p->set_has_paired_pfld_probe(true);
                 }
             }
         }
@@ -3784,7 +3787,8 @@ void UecSrc::timeToSend(const Route& route) {
     }
 
     mem_b next_packet_size = getNextPacketSize();
-    if (_probe_queue.empty() && _sender_based_cc) {
+    bool probe_is_next = _rtx_queue.empty() && !_probe_queue.empty();
+    if (!probe_is_next && _sender_based_cc) {
         if (!can_send_NSCC(next_packet_size)) {
             if (_debug_src)
                 cout << _flow.str() << " " << _node_num << "cantSend, limited by sender CWND "
@@ -3799,7 +3803,7 @@ void UecSrc::timeToSend(const Route& route) {
              << " _receiver_based_cc " << _receiver_based_cc << " credit " << credit() << endl;
     }
     // do we have enough credit if we're using receiver CC?
-    if (_probe_queue.empty() && (_receiver_based_cc && credit() <= 0)) {
+    if (!probe_is_next && (_receiver_based_cc && credit() <= 0)) {
         if (_debug_src)
             cout << "cantSend" << " flow " << _flow.str() << endl;
         ;
@@ -3809,10 +3813,10 @@ void UecSrc::timeToSend(const Route& route) {
 
     // OK, we're probably good to send
     mem_b bytes_sent = 0;
-    if (!_probe_queue.empty()) {
-        bytes_sent = sendProbePacket(route);
-    } else if (!_rtx_queue.empty()) {
+    if (!_rtx_queue.empty()) {
         bytes_sent = sendRtxPacket(route);
+    } else if (!_probe_queue.empty()) {
+        bytes_sent = sendProbePacket(route);
     } else {
         bytes_sent = sendNewPacket(route);
     }
@@ -3831,14 +3835,15 @@ void UecSrc::timeToSend(const Route& route) {
     }
 
     next_packet_size = getNextPacketSize();
-    if (_probe_queue.empty() && _sender_based_cc) {
+    probe_is_next = _rtx_queue.empty() && !_probe_queue.empty();
+    if (!probe_is_next && _sender_based_cc) {
         if (!can_send_NSCC(next_packet_size)) {
             return;
         }
     }
 
     // do we have enough credit to send again?
-    if (_probe_queue.empty() && (_receiver_based_cc && credit() <= 0)) {
+    if (!probe_is_next && (_receiver_based_cc && credit() <= 0)) {
         return;
     }
 

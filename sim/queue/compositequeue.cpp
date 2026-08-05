@@ -23,6 +23,8 @@ static bool print_switch_trace = false;
 // Change: _fail_psn_num now means "number of packets to drop per flow"
 int CompositeQueue::_fail_psn_num = -1;  // if zero, doesn't drop anything, otherwise the number of PSNs to drop per flow
 bool CompositeQueue::_probe_high_priority = false;
+bool CompositeQueue::_coalesce_trimmed_pfld_probe = false;
+uint64_t CompositeQueue::_coalesced_pfld_probe_count = 0;
 
 // Add: Track dropped PSNs per flow
 std::unordered_map<uint32_t, std::unordered_set<int>> dropped_psns_per_flow;
@@ -73,6 +75,7 @@ CompositeQueue::CompositeQueue(linkspeed_bps bitrate,
     _return_to_sender = false;
 
     _queuesize_high = _queuesize_low = 0;
+    _reserved_probe_bytes             = 0;
     _serv                            = QUEUE_INVALID;
     stringstream ss;
     ss << "compqueue(" << bitrate / 1000000 << "Mb/s," << maxsize << "bytes)";
@@ -112,12 +115,14 @@ void CompositeQueue::beginService() {
 }
 
 bool CompositeQueue::decide_ECN() {
+    const mem_b regular_queue_bytes = regularLowQueueBytes();
     // ECN mark on deque
-    if (_queuesize_low > _ecn_maxthresh) {
+    if (regular_queue_bytes > _ecn_maxthresh) {
         return true;
-    } else if (_queuesize_low > _ecn_minthresh) {
+    } else if (regular_queue_bytes > _ecn_minthresh) {
         uint64_t p =
-            (0x7FFFFFFF * (_queuesize_low - _ecn_minthresh)) / (_ecn_maxthresh - _ecn_minthresh);
+            (0x7FFFFFFF * (regular_queue_bytes - _ecn_minthresh)) /
+            (_ecn_maxthresh - _ecn_minthresh);
         if ((uint64_t)random() < p) {
             return true;
         }
@@ -138,6 +143,11 @@ void CompositeQueue::completeService() {
                                         to_string(pkt->dst())});
         }
         _queuesize_low -= pkt->size();
+        if (_no_droping_low_header && pkt->type() == UECDATA &&
+            static_cast<UecDataPacket*>(pkt)->is_probe_packet()) {
+            assert(_reserved_probe_bytes >= pkt->size());
+            _reserved_probe_bytes -= pkt->size();
+        }
 
         // ECN mark on deque
         if (decide_ECN()) {
@@ -330,15 +340,46 @@ void CompositeQueue::receivePacket(Packet& pkt) {
 
         
     }
+
+    // A trim header already certifies the loss of its data packet and will
+    // cause a NACK. Suppress only the matching proactive probe at the queue
+    // that performed the trim. Other probe types remain untouched.
+    if (_coalesce_trimmed_pfld_probe && is_probing) {
+        auto& probe = static_cast<UecDataPacket&>(pkt);
+        if (probe.pflr_probe_type() == UecDataPacket::PflrProbeType::PROACTIVE_DATA &&
+            consumeTrimmedPfldProbe(pkt)) {
+            _coalesced_pfld_probe_count++;
+            pkt.free();
+            return;
+        }
+    }
+
+    // Probes use reserved headroom but remain in the normal low-priority FIFO,
+    // so they cannot overtake data already queued on this path.
+    if (_no_droping_low_header && is_probing) {
+        Packet* pkt_p = &pkt;
+        _enqueued_low.push(pkt_p);
+        _queuesize_low += pkt.size();
+        _reserved_probe_bytes += pkt.size();
+        if (_logger)
+            _logger->logQueue(*this, QueueLogger::PKT_ENQUEUE, pkt);
+
+        if (_serv == QUEUE_INVALID) {
+            beginService();
+        }
+        return;
+    }
+
     // low priority trim, only trim incomming packet
     // then drop as normal packet
     if ((!pkt.header_low_only()) && _low_priority_trim) {
         assert(_disable_trim);
-        if (_queuesize_low + pkt.size() > _maxsize) {
+        if (regularLowQueueBytes() + pkt.size() > _maxsize) {
             if (print_switch_trace) {
                 printUecDataPacketAction(eventlist().now(), "trim", &pkt);
             }
             logLegacyReactionDrop(eventlist(), pkt);
+            rememberTrimmedPfldProbe(pkt);
             // trim pkt and treated as a small data packet
             pkt.strip_payload_low(_trim_size);
             // cout << "CQ trim at " << _nodename << endl;
@@ -350,11 +391,11 @@ void CompositeQueue::receivePacket(Packet& pkt) {
     }
 
     if (!pkt.header_only()) {
-        bool condition = (_queuesize_low + pkt.size() <= _maxsize);
+        bool condition = (regularLowQueueBytes() + pkt.size() <= _maxsize);
         if (_no_droping_low_header) {
             // if not dropping low priority header pkt(probe, low trim)
             // discard the random choosing step
-            condition = _queuesize_low + pkt.size() <= _maxsize;
+            condition = regularLowQueueBytes() + pkt.size() <= _maxsize;
         }
         if (condition) {
             // regular packet; don't drop the arriving packet
@@ -363,7 +404,7 @@ void CompositeQueue::receivePacket(Packet& pkt) {
             // it might be full and we randomly chose an
             // enqueued packet to trim
 
-            if (_queuesize_low + pkt.size() > _maxsize) {
+            if (regularLowQueueBytes() + pkt.size() > _maxsize) {
                 // we're going to drop an existing packet from the queue
                 if (_enqueued_low.empty()) {
                     // cout << "QUeuesize " << _queuesize_low << " packetsize " << pkt.size() << "
@@ -394,6 +435,7 @@ void CompositeQueue::receivePacket(Packet& pkt) {
                             printUecDataPacketAction(eventlist().now(), "trim", booted_pkt);
                         }
                         logLegacyReactionDrop(eventlist(), *booted_pkt);
+                        rememberTrimmedPfldProbe(*booted_pkt);
                         booted_pkt->strip_payload(_trim_size);
                     // cout << "CQ trim at " << _nodename << endl;
                     _num_stripped++;
@@ -521,6 +563,7 @@ void CompositeQueue::receivePacket(Packet& pkt) {
                 printUecDataPacketAction(eventlist().now(), "trim", &pkt);
             }
             logLegacyReactionDrop(eventlist(), pkt);
+            rememberTrimmedPfldProbe(pkt);
             pkt.strip_payload(_trim_size);
             // cout << "CQ trim at " << _nodename << endl;
             _num_stripped++;
@@ -581,6 +624,31 @@ void CompositeQueue::receivePacket(Packet& pkt) {
     if (_serv == QUEUE_INVALID) {
         beginService();
     }
+}
+
+void CompositeQueue::rememberTrimmedPfldProbe(const Packet& pkt) {
+    if (!_coalesce_trimmed_pfld_probe || pkt.type() != UECDATA || pkt.header_only()) {
+        return;
+    }
+    const auto& data = static_cast<const UecDataPacket&>(pkt);
+    if (data.is_probe_packet() || !data.has_paired_pfld_probe()) {
+        return;
+    }
+    const uint64_t key = (static_cast<uint64_t>(pkt.flow_id()) << 32) |
+                         static_cast<uint64_t>(data.epsn());
+    _trimmed_pfld_probe_keys.insert(key);
+}
+
+bool CompositeQueue::consumeTrimmedPfldProbe(const Packet& pkt) {
+    const auto& probe = static_cast<const UecDataPacket&>(pkt);
+    const uint64_t key = (static_cast<uint64_t>(pkt.flow_id()) << 32) |
+                         static_cast<uint64_t>(probe.epsn());
+    const auto found = _trimmed_pfld_probe_keys.find(key);
+    if (found == _trimmed_pfld_probe_keys.end()) {
+        return false;
+    }
+    _trimmed_pfld_probe_keys.erase(found);
+    return true;
 }
 
 // Add a hashmap to track flow IDs that have already dropped the specified PSN

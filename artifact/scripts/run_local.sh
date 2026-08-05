@@ -37,6 +37,7 @@ run_step() {
 
 build_id="${run_id}-build"
 run_step "${build_id}" artifact/slurm/build_and_smoke.sbatch
+export ORDEREDCHAOS_BINARY="${SCRATCH}/orderedchaos_ae/builds/${build_id}/htsim_uec"
 
 if [[ "${mode}" == "short" ]]; then
     quick_id="${run_id}-short"
@@ -58,13 +59,13 @@ figure10_id="${run_id}-figure10"
 figure9_id="${run_id}-figure9"
 figure13_id="${run_id}-figure13"
 figure8_id="${run_id}-figure8"
-source_id="${run_id}-source"
 figure11_id="${run_id}-figure11"
 figure11_plot_id="${run_id}-figure11-plot"
 comm_id="${run_id}-comm"
 figure12_id="${run_id}-figure12"
 camera_id="${run_id}-camera"
 camera_plot_id="${run_id}-camera-plot"
+camera_incast_id="${run_id}-camera-incast"
 collect_id="${run_id}-collect"
 
 run_step "${fetch_id}" artifact/slurm/fetch_inputs.sbatch
@@ -79,8 +80,6 @@ run_step "${figure10_id}" artifact/slurm/full_figure10.sbatch
 run_step "${figure9_id}" artifact/slurm/full_figure9.sbatch
 run_step "${figure13_id}" artifact/slurm/camera_ready_figure13.sbatch
 run_step "${figure8_id}" artifact/slurm/full_figure8.sbatch
-run_step "${source_id}" artifact/slurm/build_source_snapshots.sbatch
-
 export FIG11_JOB="${figure11_id}"
 run_step "${figure11_id}" artifact/slurm/figure11_trace.sbatch
 run_step "${figure11_plot_id}" artifact/slurm/analyze_figure11.sbatch
@@ -92,6 +91,7 @@ run_step "${figure12_id}" artifact/slurm/figure12_trace.sbatch
 run_step "${camera_id}" artifact/slurm/camera_ready_new_images.sbatch
 export RAW_JOB_ID="${camera_id}"
 run_step "${camera_plot_id}" artifact/slurm/analyze_camera_ready_new_images.sbatch
+run_step "${camera_incast_id}" artifact/slurm/camera_ready_incast.sbatch
 
 export ANALYTICAL_JOB="${analytical_id}"
 export FIG1A_JOB="${figure1a_id}"
@@ -107,6 +107,7 @@ export FIG11_PLOT="${figure11_plot_id}"
 export FIG12_JOB="${figure12_id}"
 export CAMERA_JOB="${camera_id}"
 export CAMERA_PLOT="${camera_plot_id}"
+export CAMERA_INCAST_JOB="${camera_incast_id}"
 run_step "${collect_id}" artifact/slurm/collect_full_results.sbatch
 
 printf '\nFull local reproduction passed.\nResults: %s/full-%s\n' \

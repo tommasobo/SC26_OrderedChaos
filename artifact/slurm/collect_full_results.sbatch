@@ -14,7 +14,7 @@ cd "${SLURM_SUBMIT_DIR}"
 required_variables=(
     ANALYTICAL_JOB FIG1A_JOB FIG1B_JOB FIG6_JOB MICRO_JOB MICRO_PLOT
     FIG10_JOB FIG9_JOB FIG13_JOB FIG8_JOB FIG11_PLOT FIG12_JOB
-    CAMERA_JOB CAMERA_PLOT
+    CAMERA_JOB CAMERA_PLOT CAMERA_INCAST_JOB
 )
 for variable in "${required_variables[@]}"; do
     if [[ -z "${!variable:-}" ]]; then
@@ -114,8 +114,11 @@ copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-new-images-${CAMERA_JOB}-analysis-${CAMERA_PLOT}/figure_axis/camera_ready_new_image1" \
     "Camera_Ready_New_Image_1"
 copy_pair \
-    "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-new-images-${CAMERA_JOB}-analysis-${CAMERA_PLOT}/figure_axis/camera_ready_new_image2" \
+    "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-incast-${CAMERA_INCAST_JOB}/camera_ready_new_image2" \
     "Camera_Ready_New_Image_2"
+copy_pair \
+    "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-incast-${CAMERA_INCAST_JOB}/camera_ready_new_image2_linear" \
+    "Camera_Ready_New_Image_2_Linear"
 
 cp \
     "${SCRATCH}/orderedchaos_ae/analysis/analytical-${ANALYTICAL_JOB}/memory-claim-implied-4000b/table1_formulas.csv" \
@@ -137,6 +140,7 @@ cp \
     printf 'figure12=%s\n' "${FIG12_JOB}"
     printf 'camera_ready=%s\n' "${CAMERA_JOB}"
     printf 'camera_ready_analysis=%s\n' "${CAMERA_PLOT}"
+    printf 'camera_ready_incast=%s\n' "${CAMERA_INCAST_JOB}"
 } > "${RESULTS}/run.txt"
 
 if [[ -s "${SKIPPED_SUMMARY}" ]]; then

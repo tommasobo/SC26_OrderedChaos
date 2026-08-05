@@ -1,4 +1,9 @@
 {
+  "configuration_policy": {
+    "pflr_probe_interval": 1,
+    "scope": "Figures 7 through 12 and both camera-ready experiments",
+    "outside_scope": "Retain the original artifact configuration"
+  },
   "algorithm_profiles": {
     "ecmp": {
       "load_balancing_algo": "ecmp",
@@ -30,10 +35,10 @@
         "-precisefastlossrecovery",
         "3",
         "-pflr_proactive_probe",
-        "0",
+        "1",
         "-pflr_proactive_rtx_probe",
         "-no_droping_low_header",
-        "-pflr_pace_rtx"
+        "-pflr_coalesce_trim_probe"
       ]
     },
     "pfld": {
@@ -42,9 +47,10 @@
         "-precisefastlossrecovery",
         "3",
         "-pflr_proactive_probe",
-        "0",
+        "1",
         "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header"
+        "-no_droping_low_header",
+        "-pflr_coalesce_trim_probe"
       ]
     },
     "pfld_probe1": {
@@ -55,7 +61,8 @@
         "-pflr_proactive_probe",
         "1",
         "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header"
+        "-no_droping_low_header",
+        "-pflr_coalesce_trim_probe"
       ]
     },
     "pfld_probe16": {
@@ -66,7 +73,8 @@
         "-pflr_proactive_probe",
         "16",
         "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header"
+        "-no_droping_low_header",
+        "-pflr_coalesce_trim_probe"
       ]
     },
     "rss_rack_tlp": {
@@ -98,19 +106,6 @@
       },
       "variants": {
         "paper_configuration": {
-          "algorithm_profile_overrides": {
-            "rss1": {
-              "extra_args": [
-                "-precisefastlossrecovery",
-                "3",
-                "-pflr_proactive_probe",
-                "16",
-                "-pflr_proactive_rtx_probe",
-                "-no_droping_low_header",
-                "-pflr_pace_rtx"
-              ]
-            }
-          },
           "drop_rates": [
             0,
             5e-05
@@ -201,7 +196,7 @@
             "off",
             "on"
           ],
-          "seeds": 25,
+          "seeds": 100,
           "algorithms": [
             "ecmp",
             "flowbender",
@@ -240,10 +235,11 @@
           "trim_modes": [
             "off"
           ],
-          "seeds": 1,
+          "seeds": 8,
           "algorithms": [
             "rss",
-            "pfld_probe1"
+            "pfld_probe1",
+            "rss_rack_tlp"
           ]
         }
       }
@@ -278,7 +274,7 @@
             "off",
             "on"
           ],
-          "seeds": 3,
+          "seeds": 12,
           "algorithms": [
             "ecmp",
             "flowbender",
@@ -317,7 +313,7 @@
             "off",
             "on"
           ],
-          "seeds": 1,
+          "seeds": 3,
           "rss_subflows": 16,
           "algorithms": [
             "ecmp",
@@ -621,7 +617,7 @@
       }
     },
     "camera_ready_new_images": {
-      "paper_element": "Camera Ready New Image 1 (Google RPC FCT) and Camera Ready New Image 2 (Google RPC timeout events)",
+      "paper_element": "Camera Ready New Image 1 (Google RPC FCT)",
       "input_kind": "tm",
       "input": "scripts/connection_matrices/google_rpc.cm",
       "topology": "scripts/topologies/64_400.topo",
@@ -654,7 +650,7 @@
             "off",
             "on"
           ],
-          "seeds": 1,
+          "seeds": 3,
           "algorithms": [
             "ecmp",
             "flowbender",
@@ -663,7 +659,47 @@
             "reps",
             "rss",
             "pfld",
-            "pfld_probe16",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "camera_ready_incast": {
+      "paper_element": "Camera Ready New Image 2, 32-to-1 1 MiB incast",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/camera_incast_64.cm",
+      "topology": "scripts/topologies/64_400.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 50,
+        "lgs_percent": 10,
+        "end_ms": 10000
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            0.0005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 8,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
             "rss_rack_tlp"
           ]
         }

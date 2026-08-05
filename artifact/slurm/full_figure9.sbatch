@@ -14,10 +14,12 @@ cd "${SLURM_SUBMIT_DIR}"
 ROOT="${SCRATCH}/orderedchaos_ae/raw/figure9-full-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure9-full-${SLURM_JOB_ID}"
 WORKERS="${ORDEREDCHAOS_WORKERS:-2}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 mkdir -p "${ROOT}" "${MEASURE}"
 
 /usr/bin/time -v -o "${MEASURE}/simulation.time" \
     python3 artifact/scripts/run_simulation_matrix.py \
+    --binary "${BINARY}" \
     --result figure9 --variant paper_configuration \
     --output-root "${ROOT}" --workers "${WORKERS}" \
     > "${MEASURE}/simulation.out" 2> "${MEASURE}/simulation.err"

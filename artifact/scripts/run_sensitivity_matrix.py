@@ -41,6 +41,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--variant", choices=tuple(VARIANTS), required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, default=REPO / "build/htsim_uec")
     parser.add_argument("--workers", type=int, default=16)
     parser.add_argument("--seed", type=int, default=None,
                         help="Override the configured seed.")
@@ -68,7 +69,7 @@ def run_one(task: Task, args: argparse.Namespace, config: dict[str, float | int]
     log = args.output_root / f"{slug}.out"
     timing_path = run_dir / "time.txt"
     cmd = [
-        str(REPO / "build/htsim_uec"),
+        str(args.binary),
         "-data_collection_config", str(REPO / "scripts/metrics_collection_policies/collect_default.json"),
         "-end", "10000", "-seed", str(config["seed"]),
         "-tm", str(REPO / "scripts/connection_matrices/tornado_128_8000000.cm"),
@@ -94,8 +95,9 @@ def run_one(task: Task, args: argparse.Namespace, config: dict[str, float | int]
     with log.open("w", encoding="utf-8") as output:
         completed = subprocess.run(
             ["/usr/bin/time", "-v", "-o", str(timing_path), *cmd],
-            cwd=REPO, stdout=output, stderr=subprocess.STDOUT,
+            cwd=run_dir, stdout=output, stderr=subprocess.STDOUT,
         )
+    (run_dir / "logout.dat").unlink(missing_ok=True)
     elapsed = time.monotonic() - started
     if completed.returncode != 0:
         raise RuntimeError(f"{slug} failed with exit code {completed.returncode}")
@@ -123,6 +125,9 @@ def run_one(task: Task, args: argparse.Namespace, config: dict[str, float | int]
 
 def main() -> int:
     args = parse_args()
+    args.binary = args.binary.resolve()
+    if not args.binary.is_file():
+        raise SystemExit(f"Missing simulator binary: {args.binary}")
     if args.output_root.exists():
         raise SystemExit(f"Refusing existing output root: {args.output_root}")
     if args.workers <= 0:
@@ -142,6 +147,7 @@ def main() -> int:
         "variant": args.variant,
         "configuration": config,
         "absolute_rto_override_us": args.rto_us,
+        "binary": str(args.binary),
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
     }
     (args.output_root / "provenance.json").write_text(

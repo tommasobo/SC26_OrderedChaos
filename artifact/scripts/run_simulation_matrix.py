@@ -216,7 +216,7 @@ def run_one(task: Task, result: dict, variant: dict, profile: dict, run_root: Pa
     timed_out = False
     with log_path.open("w", encoding="utf-8") as log_handle:
         process = subprocess.Popen(
-            timed_command, cwd=REPO, stdout=log_handle, stderr=subprocess.STDOUT,
+            timed_command, cwd=run_dir, stdout=log_handle, stderr=subprocess.STDOUT,
             start_new_session=True,
         )
         try:
@@ -230,6 +230,8 @@ def run_one(task: Task, result: dict, variant: dict, profile: dict, run_root: Pa
                 os.killpg(process.pid, signal.SIGKILL)
                 process.wait()
             return_code = 124
+    # The simulator's auxiliary log duplicates retained stdout and can be very large.
+    (run_dir / "logout.dat").unlink(missing_ok=True)
     elapsed = time.monotonic() - start
     timing = parse_time_file(time_path)
     status = "timeout" if timed_out else (

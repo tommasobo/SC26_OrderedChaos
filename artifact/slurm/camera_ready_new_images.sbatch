@@ -16,30 +16,24 @@ if [[ ! -x "${PYTHON}" ]]; then
     exit 2
 fi
 
-SOURCE="${SCRATCH}/orderedchaos_ae/worktrees/camera_ready_source"
 ROOT="${SCRATCH}/orderedchaos_ae/raw/camera-ready-new-images-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/camera-ready-new-images-${SLURM_JOB_ID}"
 LOCAL_MODE="${ORDEREDCHAOS_LOCAL:-0}"
-SOURCE_WORKERS="${ORDEREDCHAOS_WORKERS:-8}"
-BUILD_JOBS="${ORDEREDCHAOS_WORKERS:-16}"
+SOURCE_WORKERS="${ORDEREDCHAOS_WORKERS:-4}"
 RACK_WORKERS=2
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 if [[ "${LOCAL_MODE}" == "1" ]]; then
     RACK_WORKERS=1
 fi
 mkdir -p "${ROOT}" "${MEASURE}"
 
-if [[ ! -x "${SOURCE}/build/htsim_uec" ]]; then
-    cmake -S "${SOURCE}/sim" -B "${SOURCE}/build" -DCMAKE_BUILD_TYPE=Release
-    cmake --build "${SOURCE}/build" --parallel "${BUILD_JOBS}"
-fi
-
 pids=()
 run_source() {
     /usr/bin/time -v -o "${MEASURE}/source.time" \
         "${PYTHON}" artifact/scripts/run_simulation_matrix.py \
-        --binary "${SOURCE}/build/htsim_uec" --result camera_ready_new_images \
+        --binary "${BINARY}" --result camera_ready_new_images \
         --variant paper_configuration \
-        --algorithms ecmp,flowbender,flowlet,oblivious,reps,rss,pfld,pfld_probe16 \
+        --algorithms ecmp,flowbender,flowlet,oblivious,reps,rss,pfld \
         --output-root "${ROOT}/source" --workers "${SOURCE_WORKERS}" \
         > "${MEASURE}/source.out" 2> "${MEASURE}/source.err"
 }
@@ -47,6 +41,7 @@ run_source() {
 run_rack() {
     /usr/bin/time -v -o "${MEASURE}/rack.time" \
         "${PYTHON}" artifact/scripts/run_simulation_matrix.py \
+        --binary "${BINARY}" \
         --result camera_ready_new_images --variant paper_configuration \
         --algorithms rss_rack_tlp --output-root "${ROOT}/rack" \
         --workers "${RACK_WORKERS}" \

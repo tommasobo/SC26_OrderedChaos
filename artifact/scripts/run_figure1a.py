@@ -45,6 +45,7 @@ CASES = {
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, default=REPO / "build/htsim_uec")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--flow-bytes", type=int, default=250000000)
     parser.add_argument(
@@ -108,7 +109,7 @@ def run_case(case: str, case_config: dict[str, object], traffic_matrix: Path,
     if case == "one_asymmetric_link":
         extra_args = ["-failed", "1", "-failed_link_ratio", str(args.failed_link_ratio)]
     cmd = [
-        str(REPO / "build/htsim_uec"),
+        str(args.binary),
         "-data_collection_config", str(REPO / "scripts/metrics_collection_policies/collect_default.json"),
         "-end", "10000", "-seed", str(args.seed),
         "-tm", str(traffic_matrix),
@@ -256,6 +257,9 @@ def plot(args: argparse.Namespace, raw_root: Path) -> None:
 
 def main() -> int:
     args = parse_args()
+    args.binary = args.binary.resolve()
+    if not args.binary.is_file():
+        raise SystemExit(f"Missing simulator binary: {args.binary}")
     if args.rto_us is not None and args.rto_us <= 0:
         raise SystemExit("--rto-us must be positive")
     if args.workers < 1:
@@ -281,6 +285,7 @@ def main() -> int:
         "flow_bytes": args.flow_bytes,
         "failed_link_ratio": args.failed_link_ratio,
         "absolute_rto_override_us": args.rto_us,
+        "binary": str(args.binary),
         "flow_size_basis": "configured for Figure 1A's approximately 5 ms active interval",
         "asymmetric_case": "one failed aggregate link at 20% capacity (-failed 1 -failed_link_ratio 0.2), as stated in the paper",
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),

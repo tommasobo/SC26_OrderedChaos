@@ -11,8 +11,13 @@
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR}"
 PYTHON="${ORDEREDCHAOS_PYTHON:-${SCRATCH}/orderedchaos_ae/venv/bin/python}"
+BINARY="${ORDEREDCHAOS_BINARY:-}"
 if [[ ! -x "${PYTHON}" ]]; then
     echo "Missing artifact Python: ${PYTHON}" >&2
+    exit 2
+fi
+if [[ ! -x "${BINARY}" ]]; then
+    echo "Missing artifact simulator: ${BINARY}" >&2
     exit 2
 fi
 
@@ -44,6 +49,7 @@ launch() {
 run_figure1b() {
     /usr/bin/time -v -o "${MEASURE}/figure1b.time" \
         "${PYTHON}" artifact/scripts/run_figure1b.py \
+        --binary "${BINARY}" \
         --output-root "${RAW}/figure1b" --positive-drop-rate 0.00005 \
         --seeds "${figure1b_seeds}" --workers "${workers}" --timeout-seconds 60 \
         > "${MEASURE}/figure1b.out" 2> "${MEASURE}/figure1b.err"
@@ -53,6 +59,7 @@ launch run_figure1b
 run_figure6() {
     /usr/bin/time -v -o "${MEASURE}/figure6.time" \
         "${PYTHON}" scripts/regenerate_pfld_probe_headroom_multiseed.py \
+        --binary "${BINARY}" \
         --num-seeds "${figure6_seeds}" --jobs "${workers}" --drop-rate 0.00005 \
         --sim-out-root "${RAW}/figure6" --figure-dir "${PLOTS}/figure6" \
         --prefix reviewer_quick \
@@ -65,6 +72,7 @@ for result in figure7a figure7b; do
         local result=$1
         /usr/bin/time -v -o "${MEASURE}/${result}.time" \
             "${PYTHON}" artifact/scripts/run_simulation_matrix.py \
+            --binary "${BINARY}" \
             --result "${result}" --variant paper_configuration --seeds 1 \
             --output-root "${RAW}" --workers "${workers}" \
             > "${MEASURE}/${result}.out" 2> "${MEASURE}/${result}.err"
@@ -75,6 +83,7 @@ done
 run_figure10() {
     /usr/bin/time -v -o "${MEASURE}/figure10.time" \
         "${PYTHON}" artifact/scripts/run_simulation_matrix.py \
+        --binary "${BINARY}" \
         --result figure10 --variant paper_configuration --seeds 1 \
         --output-root "${RAW}" --workers "${workers}" \
         > "${MEASURE}/figure10.out" 2> "${MEASURE}/figure10.err"

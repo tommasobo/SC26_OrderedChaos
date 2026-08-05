@@ -14,6 +14,7 @@ cd "${SLURM_SUBMIT_DIR}"
 ROOT="${SCRATCH}/orderedchaos_ae/raw/figure1a-full-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure1a-full-${SLURM_JOB_ID}.time"
 WORKERS="${ORDEREDCHAOS_WORKERS:-2}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 /usr/bin/time -v -o "${MEASURE}" \
     python3 artifact/scripts/run_figure1a.py \
-    --output-root "${ROOT}" --workers "${WORKERS}"
+    --binary "${BINARY}" --output-root "${ROOT}" --workers "${WORKERS}"

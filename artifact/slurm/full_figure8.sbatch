@@ -14,12 +14,14 @@ ROOT="${SCRATCH}/orderedchaos_ae/raw/figure8-full-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure8-full-${SLURM_JOB_ID}"
 INPUT="${SCRATCH}/orderedchaos_ae/inputs/generated/ring_all_reduce_128_400000.cm"
 WORKERS="${ORDEREDCHAOS_WORKERS:-8}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 mkdir -p "${MEASURE}" "$(dirname "${INPUT}")"
 if [[ ! -f "${INPUT}" ]]; then
     python3 artifact/scripts/generate_ring_matrix.py --output "${INPUT}" --flow-bytes 400000
 fi
 /usr/bin/time -v -o "${MEASURE}/simulation.time" \
     python3 artifact/scripts/run_simulation_matrix.py \
+    --binary "${BINARY}" \
     --result figure8 --variant paper_configuration \
     --output-root "${ROOT}" --workers "${WORKERS}" \
     > "${MEASURE}/simulation.out" 2> "${MEASURE}/simulation.err"

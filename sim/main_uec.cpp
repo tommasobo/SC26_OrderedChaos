@@ -410,6 +410,9 @@ int main(int argc, char** argv) {
             cout << "Pflr proactive probe every " << UecSrc::_pflr_proactive_probe_pkt_count
                  << " packets " << endl;
             i++;
+        } else if (!strcmp(argv[i], "-pflr_coalesce_trim_probe")) {
+            CompositeQueue::_coalesce_trimmed_pfld_probe = true;
+            cout << "Pflr coalesce paired probes with explicit trim evidence" << endl;
         } else if (!strcmp(argv[i], "-pflr_proactive_rtx_probe")) {
             UecSrc::_pflr_proactive_rtx_probe = true;
             cout << "Pflr use proactive probe for rtx packet" << endl;
@@ -1366,6 +1369,10 @@ int main(int argc, char** argv) {
     cout << "New: " << new_pkts << " Rtx: " << rtx_pkts << " RTS: " << rts_pkts
          << " Bounced: " << bounce_pkts << " ACKs: " << ack_pkts << " NACKs: " << nack_pkts
          << " Pulls: " << pull_pkts << " sleek_pkts: " << sleek_pkts << endl;
+    if (CompositeQueue::_coalesce_trimmed_pfld_probe) {
+        cout << "PFLD paired probes coalesced after explicit trim: "
+             << CompositeQueue::_coalesced_pfld_probe_count << endl;
+    }
     /*
     list <const Route*>::iterator rt_i;
     int counts[10]; int hop;

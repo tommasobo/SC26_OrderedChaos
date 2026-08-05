@@ -150,6 +150,7 @@ submit() {
 }
 
 build_job=$(submit artifact/slurm/build_and_smoke.sbatch)
+export ORDEREDCHAOS_BINARY="${SCRATCH}/orderedchaos_ae/builds/${build_job}/htsim_uec"
 
 if [[ "${mode}" == "short" ]]; then
     quick_job=$(submit --dependency="afterok:${build_job}" \
@@ -185,9 +186,7 @@ figure13_job=$(submit --dependency="afterok:${build_job}" \
 figure8_job=$(submit --dependency="afterok:${build_job}" \
     artifact/slurm/full_figure8.sbatch)
 
-source_build=$(submit --dependency="afterok:${build_job}" \
-    artifact/slurm/build_source_snapshots.sbatch)
-figure11_job=$(submit --dependency="afterok:${source_build}:${fetch_job}" \
+figure11_job=$(submit --dependency="afterok:${build_job}:${fetch_job}" \
     artifact/slurm/figure11_trace.sbatch)
 figure11_plot=$(submit \
     --dependency="afterok:${figure11_job}" \
@@ -197,22 +196,24 @@ figure11_plot=$(submit \
 comm_job=$(submit --dependency="afterok:${fetch_job}" \
     artifact/slurm/recompute_hpc_comm_share.sbatch)
 figure12_job=$(submit \
-    --dependency="afterok:${source_build}:${fetch_job}:${comm_job}" \
+    --dependency="afterok:${build_job}:${fetch_job}:${comm_job}" \
     --export="ALL,COMM_JOB_ID=${comm_job}" \
     artifact/slurm/figure12_trace.sbatch)
 
-camera_job=$(submit --dependency="afterok:${source_build}" \
+camera_job=$(submit --dependency="afterok:${build_job}" \
     artifact/slurm/camera_ready_new_images.sbatch)
 camera_plot=$(submit --dependency="afterok:${camera_job}" \
     --export="ALL,RAW_JOB_ID=${camera_job}" \
     artifact/slurm/analyze_camera_ready_new_images.sbatch)
+camera_incast_job=$(submit --dependency="afterok:${build_job}" \
+    artifact/slurm/camera_ready_incast.sbatch)
 
 final_dependencies="${analytical_job}:${figure1a_job}:${figure1b_job}:${figure6_plot}"
 final_dependencies+=":${micro_plot}:${figure10_job}:${figure9_job}:${figure13_job}:${figure8_job}"
-final_dependencies+=":${figure11_plot}:${figure12_job}:${camera_plot}"
+final_dependencies+=":${figure11_plot}:${figure12_job}:${camera_plot}:${camera_incast_job}"
 collect_job=$(submit \
     --dependency="afterok:${final_dependencies}" \
-    --export="ALL,ANALYTICAL_JOB=${analytical_job},FIG1A_JOB=${figure1a_job},FIG1B_JOB=${figure1b_job},FIG6_JOB=${figure6_job},MICRO_JOB=${micro_job},MICRO_PLOT=${micro_plot},FIG10_JOB=${figure10_job},FIG9_JOB=${figure9_job},FIG13_JOB=${figure13_job},FIG8_JOB=${figure8_job},FIG11_PLOT=${figure11_plot},FIG12_JOB=${figure12_job},CAMERA_JOB=${camera_job},CAMERA_PLOT=${camera_plot}" \
+    --export="ALL,ANALYTICAL_JOB=${analytical_job},FIG1A_JOB=${figure1a_job},FIG1B_JOB=${figure1b_job},FIG6_JOB=${figure6_job},MICRO_JOB=${micro_job},MICRO_PLOT=${micro_plot},FIG10_JOB=${figure10_job},FIG9_JOB=${figure9_job},FIG13_JOB=${figure13_job},FIG8_JOB=${figure8_job},FIG11_PLOT=${figure11_plot},FIG12_JOB=${figure12_job},CAMERA_JOB=${camera_job},CAMERA_PLOT=${camera_plot},CAMERA_INCAST_JOB=${camera_incast_job}" \
     artifact/slurm/collect_full_results.sbatch)
 
 printf '%s\n' \

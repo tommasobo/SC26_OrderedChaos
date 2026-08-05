@@ -19,10 +19,12 @@ fi
 ROOT="${SCRATCH}/orderedchaos_ae/raw/figure10-full-${SLURM_JOB_ID}"
 MEASURE="${SCRATCH}/orderedchaos_ae/measurements/figure10-full-${SLURM_JOB_ID}"
 WORKERS="${ORDEREDCHAOS_WORKERS:-24}"
+BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 mkdir -p "${ROOT}" "${MEASURE}"
 
 /usr/bin/time -v -o "${MEASURE}/simulation.time" \
     "${PYTHON}" artifact/scripts/run_simulation_matrix.py \
+    --binary "${BINARY}" \
     --result figure10 --variant paper_configuration --seeds 1-12 \
     --output-root "${ROOT}" --workers "${WORKERS}" \
     > "${MEASURE}/simulation.out" 2> "${MEASURE}/simulation.err"

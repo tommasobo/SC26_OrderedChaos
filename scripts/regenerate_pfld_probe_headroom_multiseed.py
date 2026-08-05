@@ -172,6 +172,7 @@ def parse_args() -> argparse.Namespace:
         description="Regenerate the PFLD proactive-probe/headroom figure with fresh multi-seed data."
     )
     parser.add_argument("--num-seeds", type=int, default=50, help="Number of seeds per config.")
+    parser.add_argument("--binary", type=Path, default=BIN, help="Simulator binary to execute.")
     parser.add_argument("--seed-start", type=int, default=1, help="Starting seed value.")
     parser.add_argument("--jobs", type=int, default=min(8, os.cpu_count() or 4), help="Parallel simulator jobs.")
     parser.add_argument(
@@ -219,7 +220,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def _build_command(case: RunCase, seed: int, metrics_dir: Path, drop_rate: float,
-                   rto_us: float | None) -> list[str]:
+                   rto_us: float | None, binary: Path) -> list[str]:
     base_args = list(case.base_args)
     drop_index = base_args.index("-switch_random_drop_prob")
     base_args[drop_index + 1] = f"{drop_rate:.10g}"
@@ -227,7 +228,7 @@ def _build_command(case: RunCase, seed: int, metrics_dir: Path, drop_rate: float
         rto_index = base_args.index("-rto_ratio")
         base_args[rto_index:rto_index + 2] = ["-rto_us", str(rto_us)]
     return [
-        str(BIN),
+        str(binary),
         "-data_collection_config", str(METRICS_CFG),
         "-end", "10000",
         "-seed", str(seed),
@@ -250,7 +251,7 @@ def _parse_time_file(path: Path) -> dict[str, str]:
 
 
 def _run_case(case: RunCase, seed: int, output_root: Path, drop_rate: float,
-              rto_us: float | None) -> dict[str, object]:
+              rto_us: float | None, binary: Path) -> dict[str, object]:
     panel_dir = output_root / case.panel / case.case_id
     metrics_dir = panel_dir / "metrics" / f"seed_{seed:03d}"
     metrics_dir.mkdir(parents=True, exist_ok=True)
@@ -260,15 +261,16 @@ def _run_case(case: RunCase, seed: int, output_root: Path, drop_rate: float,
     time_path = panel_dir / f"{case.case_id}_seed{seed:03d}.time"
     command_path = panel_dir / f"{case.case_id}_seed{seed:03d}.command"
     marker_path = panel_dir / f"{case.case_id}_seed{seed:03d}.PASS"
-    cmd = _build_command(case, seed, metrics_dir, drop_rate, rto_us)
+    cmd = _build_command(case, seed, metrics_dir, drop_rate, rto_us, binary)
     command_path.write_text(shlex.join(cmd) + "\n", encoding="utf-8")
 
     start = time.monotonic()
     with log_path.open("w", encoding="utf-8") as stdout_f, err_path.open("w", encoding="utf-8") as stderr_f:
         result = subprocess.run(
             ["/usr/bin/time", "-v", "-o", str(time_path), *cmd],
-            cwd=ROOT, stdout=stdout_f, stderr=stderr_f, text=True,
+            cwd=metrics_dir, stdout=stdout_f, stderr=stderr_f, text=True,
         )
+    (metrics_dir / "logout.dat").unlink(missing_ok=True)
     elapsed = time.monotonic() - start
 
     if result.returncode != 0:
@@ -336,23 +338,6 @@ def _panel_prefix(panel: str, num_seeds: int) -> str:
     return f"{stem}_{num_seeds}seeds"
 
 
-def _annotate_reduction(
-    ax: plt.Axes,
-    left_val: float,
-    right_x: float,
-    right_val: float,
-    right_err: float,
-    y_span: float,
-) -> float:
-    if not np.isfinite(left_val) or left_val <= 0 or not np.isfinite(right_val):
-        return right_val + right_err
-    reduction = (left_val - right_val) / left_val * 100.0
-    y_off = max(0.04 * y_span, 0.015 * max(left_val, right_val + right_err, 1.0))
-    y_text = right_val + right_err + y_off
-    ax.text(right_x, y_text, f"-{reduction:.0f}%", ha="center", va="bottom", fontsize=10)
-    return y_text
-
-
 def _plot_panel(panel_df: pd.DataFrame, figure_pdf: Path, figure_png: Path,
                 fig_w: float, fig_h: float, drop_rate: float) -> None:
     sns.set_theme(style="whitegrid", context="paper", font_scale=1.15)
@@ -397,12 +382,7 @@ def _plot_panel(panel_df: pd.DataFrame, figure_pdf: Path, figure_png: Path,
     ax.grid(axis="y", zorder=0)
 
     ymax = float(np.max(vals + errs)) if len(vals) else 1.0
-    text_top = ymax
-    if len(vals) == 2:
-        y_span = max(ymax, 1.0)
-        text_top = _annotate_reduction(ax, vals[0], x[1], vals[1], errs[1], y_span)
-
-    ax.set_ylim(0, max(ymax, text_top) * 1.12 if max(ymax, text_top) > 0 else 1.0)
+    ax.set_ylim(0, ymax * 1.08 if ymax > 0 else 1.0)
 
     fig.tight_layout(pad=0.35)
     fig.savefig(figure_pdf, bbox_inches="tight")
@@ -412,6 +392,7 @@ def _plot_panel(panel_df: pd.DataFrame, figure_pdf: Path, figure_png: Path,
 
 def main() -> None:
     args = parse_args()
+    args.binary = args.binary.resolve()
     if args.rto_us is not None and args.rto_us <= 0:
         raise SystemExit("--rto-us must be positive")
     args.figure_dir.mkdir(parents=True, exist_ok=True)
@@ -420,8 +401,8 @@ def main() -> None:
         raw_df = pd.read_csv(args.reuse_raw_csv)
         print(f"Reused raw per-seed data from {args.reuse_raw_csv}")
     else:
-        if not BIN.exists():
-            raise FileNotFoundError(f"Missing simulator binary: {BIN}")
+        if not args.binary.exists():
+            raise FileNotFoundError(f"Missing simulator binary: {args.binary}")
 
         if args.sim_out_root.exists():
             raise FileExistsError(
@@ -437,7 +418,7 @@ def main() -> None:
                     futures.append(
                         executor.submit(
                             _run_case, case, seed, args.sim_out_root,
-                            args.drop_rate, args.rto_us,
+                            args.drop_rate, args.rto_us, args.binary,
                         )
                     )
 

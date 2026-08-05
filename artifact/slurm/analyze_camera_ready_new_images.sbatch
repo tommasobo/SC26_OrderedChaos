@@ -28,7 +28,7 @@ mkdir -p "${ANALYSIS_ROOT}" "${MEASURE}"
     --source-root "${ROOT}/source" --rack-root "${ROOT}/rack" \
     --variant paper_configuration --output "${OUTPUT}" \
     --executed-rto-us 172.439 --fct-rate 0.005 \
-    --rto-rate 0.00005 --pfld-profile pfld_probe16
+    --rto-rate 0.00005 --pfld-profile pfld
 
 printf '%s\n' \
     "Camera Ready New Images analysis: ${ANALYSIS_ROOT}" \

@@ -188,6 +188,7 @@ set(UNIT_TEST_FILES
     host/rack_tlp_test
     logging/metric_test
     packet/uec_packet_test
+    queue/compositequeue_test
     switch/switch_buffer_test
     queue/qos_scheduler_test
     queue/shared_queue_test
