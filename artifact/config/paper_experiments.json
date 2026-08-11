@@ -1,0 +1,1002 @@
+{
+  "configuration_policy": {
+    "pflr_probe_interval": 1,
+    "scope": "Figures 7 through 12 and both camera-ready experiments",
+    "outside_scope": "Retain the original artifact configuration",
+    "implementation": "Host-only trim/probe NACK coalescing; switch and queue source match main"
+  },
+  "algorithm_profiles": {
+    "ecmp": {
+      "load_balancing_algo": "ecmp",
+      "extra_args": []
+    },
+    "flowbender": {
+      "load_balancing_algo": "flowbender",
+      "extra_args": []
+    },
+    "flowlet": {
+      "load_balancing_algo": "flowlet",
+      "extra_args": []
+    },
+    "oblivious": {
+      "load_balancing_algo": "oblivious",
+      "extra_args": []
+    },
+    "reps": {
+      "load_balancing_algo": "reps",
+      "extra_args": []
+    },
+    "rss": {
+      "load_balancing_algo": "rss",
+      "extra_args": []
+    },
+    "rss1": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "1",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "1",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe1": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "1",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe1_accept_promoted": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "1",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing",
+        "-pflr_accept_header_promoted_probes"
+      ]
+    },
+    "pfld_no_probes": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_disable_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_tail_only": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_tail_rtx": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe1_no_rtx": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "1",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe4_no_rtx": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "4",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe8_no_rtx": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "8",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe16_no_rtx": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "16",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe_rtt_no_rtx": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "0",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe_rtt": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "0",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe4": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "4",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe8": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "8",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "pfld_probe16": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-precisefastlossrecovery",
+        "3",
+        "-pflr_proactive_probe",
+        "16",
+        "-pflr_proactive_rtx_probe",
+        "-no_droping_low_header",
+        "-pflr_receiver_trim_probe_coalescing"
+      ]
+    },
+    "rss_rack_tlp": {
+      "load_balancing_algo": "rss",
+      "extra_args": [
+        "-rack_tlp",
+        "2",
+        "-tlp_confirmed_loss_cwnd"
+      ]
+    }
+  },
+  "results": {
+    "figure7a": {
+      "paper_element": "Figure 7a, 1 MiB 8:1 incast",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/incast_128_1000000_8.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            0,
+            5e-05
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 100,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        },
+        "camera_workload_screen": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 3,
+          "algorithms": [
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure7b": {
+      "paper_element": "Figure 7b, 4 MiB tornado",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/tornado_128_4000000.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            0,
+            5e-05
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 100,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        },
+        "camera_workload_screen": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 3,
+          "algorithms": [
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure8": {
+      "paper_element": "Figure 8, 8 MiB ring all-reduce",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/ring_all_reduce_128_8000000.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10
+      },
+      "variants": {
+        "paper_configuration": {
+          "input": "${SCRATCH}/orderedchaos_ae/inputs/generated/ring_all_reduce_128_400000.cm",
+          "drop_rates": [
+            5e-05
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 100,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld_probe1",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure9": {
+      "paper_element": "Figure 9, 800 KiB ring all-reduce timeline",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/ring_all_reduce_128_800000.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            5e-05
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 8,
+          "algorithms": [
+            "rss",
+            "pfld_probe1",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure10": {
+      "paper_element": "Figure 10, 1 MiB all-to-all",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/alltoall_64_1000000.cm",
+      "topology": "scripts/topologies/64_400.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10
+      },
+      "variants": {
+        "paper_configuration": {
+          "parameter_overrides": {
+            "rto_ratio": 1
+          },
+          "drop_rates": [
+            0,
+            5e-05
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 12,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        },
+        "camera_workload_screen": {
+          "parameter_overrides": {
+            "rto_ratio": 1
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 3,
+          "algorithms": [
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure11": {
+      "paper_element": "Figure 11, LLaMA 7B communication per iteration",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/llama7b_n4/llama.bin",
+      "topology": "scripts/topologies/64_400_2.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_update_us": 15,
+        "lgs_percent": 12
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            0.0005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 3,
+          "rss_subflows": 16,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "rss1",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure12_icon_32": {
+      "paper_element": "Figure 12, ICON-32",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/hpc/icon/icon_32/icon_32.bin",
+      "topology": "scripts/topologies/32_400.topo",
+      "nodes": 32,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": null,
+        "end_ms": 100000
+      },
+      "variants": {
+        "paper_configuration": {
+          "topology": "scripts/topologies/32_100.topo",
+          "rss_subflows": 8,
+          "parameter_overrides": {
+            "q": 40,
+            "cwnd": 40,
+            "ecn_min": 8,
+            "ecn_max": 32,
+            "rto_ratio": 1,
+            "linkspeed_mbps": 100000
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 1,
+          "algorithms": [
+            "ecmp",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure12_icon_64": {
+      "paper_element": "Figure 12, ICON-64",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/hpc/icon/icon_64/icon_64.bin",
+      "topology": "scripts/topologies/64_400.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": null,
+        "end_ms": 100000
+      },
+      "variants": {
+        "paper_configuration": {
+          "topology": "scripts/topologies/64_100.topo",
+          "rss_subflows": 8,
+          "parameter_overrides": {
+            "q": 40,
+            "cwnd": 40,
+            "ecn_min": 8,
+            "ecn_max": 32,
+            "rto_ratio": 1,
+            "linkspeed_mbps": 100000
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 1,
+          "algorithms": [
+            "ecmp",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure12_lammps_32": {
+      "paper_element": "Figure 12, LAMMPS-32",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/hpc/lammps/lammps_32/lammps_32.bin",
+      "topology": "scripts/topologies/32_400.topo",
+      "nodes": 32,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": null,
+        "end_ms": 100000
+      },
+      "variants": {
+        "paper_configuration": {
+          "topology": "scripts/topologies/32_100.topo",
+          "rss_subflows": 8,
+          "parameter_overrides": {
+            "q": 40,
+            "cwnd": 40,
+            "ecn_min": 8,
+            "ecn_max": 32,
+            "rto_ratio": 1,
+            "linkspeed_mbps": 100000
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 1,
+          "algorithms": [
+            "ecmp",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure12_lammps_64": {
+      "paper_element": "Figure 12, LAMMPS-64",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/hpc/lammps/lammps_64/lammps_64.bin",
+      "topology": "scripts/topologies/64_400.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": null,
+        "end_ms": 100000
+      },
+      "variants": {
+        "paper_configuration": {
+          "topology": "scripts/topologies/64_100.topo",
+          "rss_subflows": 8,
+          "parameter_overrides": {
+            "q": 40,
+            "cwnd": 40,
+            "ecn_min": 8,
+            "ecn_max": 32,
+            "rto_ratio": 1,
+            "linkspeed_mbps": 100000
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 1,
+          "algorithms": [
+            "ecmp",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure12_milc_32": {
+      "paper_element": "Figure 12, MILC-32",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/hpc/milc/milc_32/milc_32.bin",
+      "topology": "scripts/topologies/32_400.topo",
+      "nodes": 32,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": null,
+        "end_ms": 100000
+      },
+      "variants": {
+        "paper_configuration": {
+          "topology": "scripts/topologies/32_100.topo",
+          "rss_subflows": 8,
+          "parameter_overrides": {
+            "q": 40,
+            "cwnd": 40,
+            "ecn_min": 8,
+            "ecn_max": 32,
+            "rto_ratio": 1,
+            "linkspeed_mbps": 100000
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 1,
+          "algorithms": [
+            "ecmp",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "figure12_milc_64": {
+      "paper_element": "Figure 12, MILC-64",
+      "input_kind": "goal",
+      "input": "${SCRATCH}/orderedchaos_ae/inputs/hpc/milc/milc_64/milc_64.bin",
+      "topology": "scripts/topologies/64_400.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 2,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": null,
+        "end_ms": 100000
+      },
+      "variants": {
+        "paper_configuration": {
+          "topology": "scripts/topologies/64_100.topo",
+          "rss_subflows": 8,
+          "parameter_overrides": {
+            "q": 40,
+            "cwnd": 40,
+            "ecn_min": 8,
+            "ecn_max": 32,
+            "rto_ratio": 1,
+            "linkspeed_mbps": 100000
+          },
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 1,
+          "algorithms": [
+            "ecmp",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "camera_ready_new_images": {
+      "paper_element": "Camera Ready New Image 1 (Google RPC FCT)",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/google_rpc.cm",
+      "topology": "scripts/topologies/64_400.topo",
+      "nodes": 64,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 1.5,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 3,
+        "rss_update_us": 15,
+        "lgs_percent": 10,
+        "end_ms": 10000
+      },
+      "variants": {
+        "paper_configuration": {
+          "rss_subflows": 16,
+          "parameter_overrides": {
+            "rto_ratio": 2,
+            "rss_update_us": 50
+          },
+          "drop_rates": [
+            0,
+            5e-05,
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 3,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        }
+      }
+    },
+    "camera_ready_incast": {
+      "paper_element": "Camera Ready New Image 2, 128-node 4 MiB all-to-all sweep, 32 active senders",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/alltoall_128_4000000.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "workload_generation": {
+        "directed_pairs": 16256,
+        "flow_bytes": 4000000,
+        "destination_schedule": "round-robin permutation stages",
+        "concurrency_per_source": 1,
+        "active_source_streams": 32,
+        "generator_seed": 20260810
+      },
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 1,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10,
+        "end_ms": 40000
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 100,
+          "algorithms": [
+            "ecmp",
+            "flowbender",
+            "flowlet",
+            "oblivious",
+            "reps",
+            "rss",
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        },
+        "camera_workload_screen": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 3,
+          "algorithms": [
+            "pfld",
+            "rss_rack_tlp"
+          ]
+        },
+        "promoted_probe_ablation": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off",
+            "on"
+          ],
+          "seeds": 12,
+          "algorithms": [
+            "pfld",
+            "pfld_probe1_accept_promoted"
+          ]
+        }
+      }
+    },
+    "camera_ready_probe_ablation": {
+      "paper_element": "Camera Ready cumulative probe ablation, 8 MiB tornado",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/tornado_128_8000000.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 1,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10,
+        "end_ms": 10000
+      },
+      "variants": {
+        "paper_configuration": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 100,
+          "algorithms": [
+            "pfld_no_probes",
+            "pfld_tail_only",
+            "pfld_probe_rtt_no_rtx",
+            "pfld_probe16_no_rtx",
+            "pfld_probe8_no_rtx",
+            "pfld_probe4_no_rtx",
+            "pfld_probe1_no_rtx",
+            "pfld_probe1"
+          ]
+        }
+      }
+    },
+    "camera_ready_periodic_probe_stress": {
+      "paper_element": "Camera Ready periodic-probe stress alternative, 32-to-1 4 MiB incast",
+      "input_kind": "tm",
+      "input": "scripts/connection_matrices/incast_128_4000000_32.cm",
+      "topology": "scripts/topologies/128_400.topo",
+      "nodes": 128,
+      "parameters": {
+        "q": 148,
+        "cwnd": 148,
+        "ecn_min": 29,
+        "ecn_max": 118,
+        "rto_ratio": 1,
+        "linkspeed_mbps": 400000,
+        "rss_subflows": 16,
+        "rss_update_us": 15,
+        "lgs_percent": 10,
+        "end_ms": 10000
+      },
+      "variants": {
+        "stress_configuration": {
+          "drop_rates": [
+            0.005
+          ],
+          "trim_modes": [
+            "off"
+          ],
+          "seeds": 100,
+          "algorithms": [
+            "pfld_tail_only",
+            "pfld_probe_rtt_no_rtx",
+            "pfld_probe16_no_rtx",
+            "pfld_probe8_no_rtx",
+            "pfld_probe4_no_rtx",
+            "pfld_probe1_no_rtx"
+          ]
+        }
+      }
+    }
+  }
+}
