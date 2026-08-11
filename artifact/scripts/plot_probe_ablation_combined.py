@@ -22,10 +22,15 @@ STACK_ORDER = (
     "pfld_probe1_no_rtx",
     "pfld_probe1",
 )
+STACK_DISPLAY_ORDER = (
+    "pfld_no_probes",
+    "pfld_probe16_no_rtx",
+    "pfld_probe1_no_rtx",
+    "pfld_probe1",
+)
 STACK_LABELS = (
     "PSN",
-    "+ Section/tail",
-    "+ Periodic X16",
+    "+ Tail → X16",
     "+ Periodic X1",
     "+ RTX",
 )
@@ -37,13 +42,19 @@ STRESS_ORDER = (
     "pfld_probe1_no_rtx",
     "pfld_probe_rtt_no_rtx",
 )
+STRESS_DISPLAY_ORDER = (
+    "pfld_probe16_no_rtx",
+    "pfld_probe8_no_rtx",
+    "pfld_probe4_no_rtx",
+    "pfld_probe1_no_rtx",
+    "pfld_probe_rtt_no_rtx",
+)
 STRESS_LABELS = (
-    "Section/tail",
-    "X=16",
-    "X=8",
-    "X=4",
-    "X=1",
-    "Once/RTT",
+    "Tail → X16",
+    "X8",
+    "X4",
+    "X1",
+    "RTT",
 )
 
 # The main camera-ready plots use seaborn's Set2 trim colors. Reuse those
@@ -103,26 +114,17 @@ def compact(value: float) -> str:
     return f"{value:.1f}".rstrip("0").rstrip(".")
 
 
-def signed_reduction(reference: float, value: float) -> float:
-    return 100.0 * (reference - value) / reference if reference else 0.0
-
-
 def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
-    means = summary.mean_rto_events.to_numpy(float)
-    low = summary.normal95_low_rto_events.to_numpy(float)
-    high = summary.normal95_high_rto_events.to_numpy(float)
-    positions = np.arange(len(STACK_ORDER))
-    colors = (GRAY, TEAL_LIGHT, TEAL, TEAL_DARK, ORANGE)
+    displayed = summary.loc[list(STACK_DISPLAY_ORDER)]
+    means = displayed.mean_rto_events.to_numpy(float)
+    low = displayed.normal95_low_rto_events.to_numpy(float)
+    high = displayed.normal95_high_rto_events.to_numpy(float)
+    positions = np.arange(len(STACK_DISPLAY_ORDER))
+    colors = (GRAY, TEAL_LIGHT, TEAL_DARK, ORANGE)
 
-    axis.barh(
-        positions,
-        means,
-        height=0.62,
-        color=colors,
-        edgecolor="black",
-        linewidth=0.5,
-        zorder=2,
-    )
+    for position, mean, color in zip(positions, means, colors):
+        axis.hlines(position, 0, mean, color=color, linewidth=3.0,
+                    alpha=0.88, zorder=2)
     axis.errorbar(
         means,
         positions,
@@ -135,8 +137,8 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
     )
     # A zero-height bar is otherwise invisible; keep the successful final
     # stage explicit without inventing a nonzero plotting value.
-    axis.scatter([0], [positions[-1]], marker="D", s=14, color=ORANGE,
-                 edgecolor="black", linewidth=0.45, zorder=5, clip_on=False)
+    axis.scatter(means, positions, s=30, c=colors, edgecolor="black",
+                 linewidth=0.5, zorder=5, clip_on=False)
 
     limit = float(high.max()) * 1.30
     axis.set_xlim(0, limit)
@@ -147,24 +149,22 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
     axis.set_title("Tornado Pattern - 8MiB", fontsize=7.4,
                    fontweight="bold", pad=5)
 
+    tail_mean = float(summary.loc["pfld_tail_only", "mean_rto_events"])
     for index, mean in enumerate(means):
-        if index == 0:
-            label = compact(mean)
-        else:
-            reduction = signed_reduction(means[index - 1], mean)
-            change = "≈0%" if abs(reduction) < 0.5 else f"−{reduction:.0f}%"
-            label = f"{compact(mean)}  ({change})"
+        label = (f"{compact(tail_mean)}→{compact(mean)}"
+                 if index == 1 else compact(mean))
         x = max(mean, 0.0) + limit * 0.018
         axis.text(x, index, label, ha="left", va="center", fontsize=5.6,
                   fontweight="bold" if index == len(means) - 1 else "normal")
 
 
 def draw_stress(axis: plt.Axes, summary: pd.DataFrame) -> None:
-    means = summary.mean_rto_events.to_numpy(float)
-    low = summary.normal95_low_rto_events.to_numpy(float)
-    high = summary.normal95_high_rto_events.to_numpy(float)
-    positions = np.arange(len(STRESS_ORDER))
-    colors = (GRAY, TEAL_LIGHT, TEAL, TEAL_MID, TEAL_DARK, ORANGE)
+    displayed = summary.loc[list(STRESS_DISPLAY_ORDER)]
+    means = displayed.mean_rto_events.to_numpy(float)
+    low = displayed.normal95_low_rto_events.to_numpy(float)
+    high = displayed.normal95_high_rto_events.to_numpy(float)
+    positions = np.arange(len(STRESS_DISPLAY_ORDER))
+    colors = (TEAL_LIGHT, TEAL, TEAL_MID, TEAL_DARK, ORANGE)
     origin = 20.0
 
     for position, mean, color in zip(positions, means, colors):
@@ -184,21 +184,17 @@ def draw_stress(axis: plt.Axes, summary: pd.DataFrame) -> None:
                  linewidth=0.5, zorder=5)
     axis.set_xscale("log")
     axis.set_xlim(origin, float(high.max()) * 1.55)
-    baseline = means[0]
-    tick_labels = [STRESS_LABELS[0]]
-    for label, mean in zip(STRESS_LABELS[1:], means[1:]):
-        reduction = signed_reduction(baseline, mean)
-        change = f"−{reduction:.1f}%" if abs(reduction) < 1.0 else f"−{reduction:.0f}%"
-        tick_labels.append(f"{label} ({change})")
-    axis.set_yticks(positions, tick_labels)
+    axis.set_yticks(positions, STRESS_LABELS)
     axis.invert_yaxis()
-    axis.set_xlabel("Mean RTOs/run (log)")
+    axis.set_xlabel("Mean RTOs/run · log scale")
     axis.grid(axis="y", visible=False)
     axis.set_title("Incast 32:1 - 4MiB", fontsize=7.4,
                    fontweight="bold", pad=5)
 
+    tail_mean = float(summary.loc["pfld_tail_only", "mean_rto_events"])
     for index, mean in enumerate(means):
-        label = compact(mean)
+        label = (f"{compact(tail_mean)}→{compact(mean)}"
+                 if index == 0 else compact(mean))
         if mean > 1000:
             x = mean / 1.10
             alignment = "right"
@@ -234,13 +230,13 @@ def draw(compounding: pd.DataFrame, stress: pd.DataFrame,
     figure, (stack_axis, stress_axis) = plt.subplots(
         1,
         2,
-        figsize=(3.5, 2.25),
-        gridspec_kw={"width_ratios": (1.0, 1.0), "wspace": 0.78},
+        figsize=(3.5, 1.9),
+        gridspec_kw={"width_ratios": (1.0, 1.0), "wspace": 0.58},
     )
     draw_stack(stack_axis, compounding)
     draw_stress(stress_axis, stress)
 
-    figure.subplots_adjust(left=0.205, right=0.99, bottom=0.22, top=0.88)
+    figure.subplots_adjust(left=0.18, right=0.99, bottom=0.25, top=0.85)
 
     args.output.mkdir(parents=True, exist_ok=True)
     stem = args.output / "camera_ready_probe_ablation"
