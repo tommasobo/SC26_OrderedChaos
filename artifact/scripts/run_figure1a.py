@@ -229,7 +229,7 @@ def plot(args: argparse.Namespace, raw_root: Path) -> None:
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
 
-    sns.set_theme(style="whitegrid", context="paper", palette="Set2")
+    sns.set_theme(style="whitegrid", context="paper", palette="Set2", font="Liberation Serif")
     fig, axes = plt.subplots(2, 1, figsize=(3.1, 2.6), sharex=True, sharey=True)
     titles = {"symmetric": "Symmetric Links", "one_asymmetric_link": "One Asymmetric Link"}
     for ax, case in zip(axes, CASES):

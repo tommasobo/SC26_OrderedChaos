@@ -340,7 +340,9 @@ def _panel_prefix(panel: str, num_seeds: int) -> str:
 
 def _plot_panel(panel_df: pd.DataFrame, figure_pdf: Path, figure_png: Path,
                 fig_w: float, fig_h: float, drop_rate: float) -> None:
-    sns.set_theme(style="whitegrid", context="paper", font_scale=1.15)
+    sns.set_theme(
+        style="whitegrid", context="paper", font="Liberation Serif", font_scale=1.15
+    )
     bar_color = sns.color_palette("Set2", n_colors=8)[0]
     case_orders = {
         "probe": ["without_proactive_probes", "with_proactive_probes"],

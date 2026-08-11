@@ -131,7 +131,7 @@ def compact(value: float) -> str:
 
 
 def draw(summary: pd.DataFrame, args: argparse.Namespace) -> None:
-    sns.set_theme(style="whitegrid", context="paper")
+    sns.set_theme(style="whitegrid", context="paper", font="Liberation Serif")
     figure, (stack_axis, frequency_axis) = plt.subplots(
         1, 2, figsize=(12.2, 4.55), gridspec_kw={"width_ratios": (1.28, 1)}
     )

@@ -159,7 +159,7 @@ def plot_violin(
     df["detect_delay_plot"] = df["detect_delay_ps"] * factor
     df["detect_delay_plot"] = _ensure_positive_for_log(df["detect_delay_plot"])  # safe
 
-    sns.set_theme(style="whitegrid", context="talk", font_scale=TEXT_SCALE)
+    sns.set_theme(style="whitegrid", context="talk", font="Liberation Serif", font_scale=TEXT_SCALE)
     # Use a larger Set2 to allow indices 0-7
     set2 = sns.color_palette("Set2", n_colors=8)
     colors = set2.as_hex()
@@ -258,7 +258,7 @@ def plot_violin_multi(
     if any(df_all["Algorithm"] == "Other"):
         present_algs.append("Other")
 
-    sns.set_theme(style="whitegrid", context="talk", font_scale=TEXT_SCALE)
+    sns.set_theme(style="whitegrid", context="talk", font="Liberation Serif", font_scale=TEXT_SCALE)
     # Default palette for non-uniform cases
     default_palette = sns.color_palette("Set2", n_colors=max(3, len(present_algs)))
     # array of colors in current palette for selection

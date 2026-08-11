@@ -1,0 +1,11 @@
+# SC26 requires embedded scalable fonts in every submitted figure.
+# Liberation Serif is metric-compatible with Times and is available in the
+# pinned artifact environment. Type 42 embeds the TrueType outlines in PDF/PS
+# output instead of Matplotlib's non-compliant Type 3 glyphs.
+font.family: serif
+font.serif: Liberation Serif
+mathtext.fontset: dejavuserif
+pdf.fonttype: 42
+ps.fonttype: 42
+svg.fonttype: none
+axes.unicode_minus: False

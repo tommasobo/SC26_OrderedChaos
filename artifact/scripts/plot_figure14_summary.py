@@ -14,6 +14,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Liberation Serif"],
+    "mathtext.fontset": "dejavuserif",
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+})
+
 
 REPO = Path(__file__).resolve().parents[2]
 

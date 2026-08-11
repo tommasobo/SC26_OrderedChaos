@@ -298,7 +298,7 @@ def plot_multiseed(rows: list[dict[str, object]], output_root: Path,
     aggregate = pd.DataFrame(pooled_rows)
     aggregate.to_csv(output_root / "aggregate_summary.csv", index=False)
 
-    sns.set_theme(style="whitegrid", context="paper")
+    sns.set_theme(style="whitegrid", context="paper", font="Liberation Serif")
     figure, axis = plt.subplots(figsize=(3.2, 2.8))
     order = ["RTO", "Trim", "PFLD"]
     palette = ["#66c2a5", "#fc8d62", "#8da0cb"]

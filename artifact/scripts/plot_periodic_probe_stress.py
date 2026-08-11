@@ -120,7 +120,7 @@ def draw(summary: pd.DataFrame, args: argparse.Namespace) -> None:
     reductions = ordered.reduction_vs_section_tail_percent.to_numpy(float)
     positions = np.arange(len(ORDER))
 
-    sns.set_theme(style="whitegrid", context="paper")
+    sns.set_theme(style="whitegrid", context="paper", font="Liberation Serif")
     figure, axis = plt.subplots(figsize=(7.9, 4.25))
     colors = ["#8c8c8c", *sns.color_palette("crest", 4), "#d95f02"]
     for y, mean, color in zip(positions, means, colors):

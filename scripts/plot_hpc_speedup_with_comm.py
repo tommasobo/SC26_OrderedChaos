@@ -10,6 +10,14 @@ from typing import Dict, List, Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Liberation Serif"],
+    "mathtext.fontset": "dejavuserif",
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+})
+
 from plot_hpc_full_paper_metrics import (
     METHOD_COLOR,
     METHOD_LABEL,

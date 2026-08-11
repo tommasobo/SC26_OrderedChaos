@@ -84,7 +84,7 @@ def prepare_frame(source: pd.DataFrame, rack: pd.DataFrame, compute_fraction: fl
 def plot(frame: pd.DataFrame, output: Path) -> None:
     work = frame.copy()
     work["trim"] = work["trim_status"].map({"off": "Off", "on": "On"})
-    sns.set_theme(style="whitegrid", context="paper")
+    sns.set_theme(style="whitegrid", context="paper", font="Liberation Serif")
     figure, axis = plt.subplots(figsize=(7.0, 2.5))
     sns.barplot(
         data=work,

@@ -150,6 +150,7 @@ copy_pair "${PLOTS}/figure7a/fresh_plot" "Figure_7A"
 copy_pair "${PLOTS}/figure7b/fresh_plot" "Figure_7B"
 copy_pair "${PLOTS}/figure10/fresh_plot" "Figure_10"
 copy_pair "${PLOTS}/figure5/figure5_memory" "Figure_5"
+"${PYTHON}" artifact/scripts/check_pdf_fonts.py "${RESULTS}"
 printf 'PASS\n' > "${RESULTS}/PASS"
 printf 'Execution: %s\nRun: %s\n' \
     "${ORDEREDCHAOS_EXECUTION_MODE:-slurm}" "${SLURM_JOB_ID}" \

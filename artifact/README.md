@@ -21,6 +21,11 @@ final result directory's `ExtraFigures/` subdirectory and are formatted for
 single-column paper placement. A companion LaTeX caption defines the compact
 probe notation and records the hidden experimental context.
 
+Plotting uses the repository-level `matplotlibrc`, which selects Liberation
+Serif and embeds fonts as TrueType outlines in PDF output. Collection runs
+`artifact/scripts/check_pdf_fonts.py` before declaring success, so Type 3 or
+unembedded fonts fail the reproduction.
+
 Slurm is supported and recommended for the full workflow because independent
 experiment groups can run concurrently:
 

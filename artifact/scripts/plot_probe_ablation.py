@@ -154,7 +154,7 @@ def draw_panel(
 
 
 def draw(summary: pd.DataFrame, args: argparse.Namespace) -> None:
-    sns.set_theme(style="whitegrid", context="paper")
+    sns.set_theme(style="whitegrid", context="paper", font="Liberation Serif")
     figure, axes = plt.subplots(2, 2, figsize=(10.8, 6.1), sharex="col")
     draw_panel(axes[0, 0], summary, COMPONENT_ORDER, COMPONENT_LABELS,
                "rto_events", "a) Probe components")

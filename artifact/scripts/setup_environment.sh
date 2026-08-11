@@ -109,6 +109,15 @@ import numpy
 import pandas
 import scipy
 import seaborn
+from matplotlib import font_manager
+
+try:
+    font_manager.findfont("Liberation Serif", fallback_to_default=False)
+except ValueError as error:
+    raise SystemExit(
+        "Liberation Serif TrueType fonts are required for paper-compliant plots. "
+        "Install the fonts-liberation package and rerun setup."
+    ) from error
 
 print("OrderedChaos Python environment is ready")
 print("numpy", numpy.__version__)

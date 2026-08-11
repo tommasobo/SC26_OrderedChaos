@@ -121,18 +121,21 @@ def summarize(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def draw(frame: pd.DataFrame, summary: pd.DataFrame, args: argparse.Namespace, scale: str) -> None:
-    sns.set_theme(style="whitegrid", context="paper")
-    figure, axis = plt.subplots(figsize=(12.4, 3.75))
+    sns.set_theme(
+        style="whitegrid", context="paper", font="Liberation Serif",
+        rc={"pdf.fonttype": 42, "ps.fonttype": 42, "mathtext.fontset": "dejavuserif"},
+    )
+    figure, axis = plt.subplots(figsize=(3.5, 2.6))
     if scale == "log":
         # A true log axis cannot represent the zero-RTO result that this
         # experiment is designed to expose. Symlog preserves exact zero and
         # is logarithmic above one event.
-        axis.set_yscale("symlog", linthresh=1, linscale=0.7)
+        axis.set_xscale("symlog", linthresh=1, linscale=0.7)
     centers = np.arange(len(ORDER), dtype=float)
-    width = 0.36
+    height = 0.34
     global_high = 0.0
     for trim_index, trim in enumerate(("off", "on")):
-        offset = (-0.5 if trim_index == 0 else 0.5) * width
+        offset = (-0.5 if trim_index == 0 else 0.5) * height
         rows = [summary[(summary.algorithm == algorithm) & (summary.trim == trim)].iloc[0]
                 for algorithm in ORDER]
         values = np.array([float(row.mean_rto_events) for row in rows])
@@ -140,32 +143,37 @@ def draw(frame: pd.DataFrame, summary: pd.DataFrame, args: argparse.Namespace, s
         highs = np.array([float(row.normal95_high_rto_events) for row in rows])
         global_high = max(global_high, float(np.max(highs)))
         positions = centers + offset
-        axis.bar(positions, values, width=width, label=f"Trimming {trim}",
-                 color=COLORS[trim], edgecolor="black", linewidth=0.8, zorder=2)
-        axis.errorbar(positions, values, yerr=[values - lows, highs - values],
-                      fmt="none", ecolor="black", capsize=3, zorder=4)
+        axis.barh(positions, values, height=height, label=f"Trimming {trim}",
+                  color=COLORS[trim], edgecolor="black", linewidth=0.65, zorder=2)
+        axis.errorbar(values, positions, xerr=[values - lows, highs - values],
+                      fmt="none", ecolor="black", elinewidth=0.65,
+                      capsize=1.8, zorder=4)
         for index, algorithm in enumerate(ORDER):
-            label_y = max(highs[index], values[index]) * 1.12
-            axis.text(positions[index], label_y,
-                      compact_count(values[index]), ha="center", va="bottom",
-                      fontsize=8, fontweight="bold")
+            axis.annotate(
+                compact_count(values[index]),
+                xy=(max(highs[index], values[index]), positions[index]),
+                xytext=(2.5, 0), textcoords="offset points",
+                ha="left", va="center", fontsize=5.8, fontweight="bold",
+                annotation_clip=False,
+            )
     suffix = "" if scale == "log" else "_linear"
     if scale == "log":
-        axis.set_ylabel("RTO events per run (symlog; linear through 1)")
+        axis.set_xlabel("Mean RTO events per run (symlog)")
+        axis.set_xlim(left=0, right=max(global_high * 2.6, 4e5))
     else:
-        axis.set_ylim(0, global_high * 1.20)
-        axis.set_ylabel("RTO events per run")
-    axis.set_xticks(centers, [LABELS[name] for name in ORDER])
-    axis.tick_params(axis="x", rotation=18)
-    axis.set_title(
-        f"{args.workload}  |  corruption probability {args.drop_rate:g}  |  "
-        f"{int(summary.seeds.min())} matched seeds\n"
-        "Bars and labels: mean RTO count; whiskers: normal 95% CI (mean +/- 1.96 SEM)",
-        fontsize=11,
+        axis.set_xlim(0, global_high * 1.20)
+        axis.set_xlabel("Mean RTO events per run")
+    axis.set_yticks(centers, [LABELS[name] for name in ORDER])
+    axis.invert_yaxis()
+    axis.tick_params(axis="x", labelsize=5.7)
+    axis.tick_params(axis="y", labelsize=6.2, pad=1.5)
+    axis.legend(
+        loc="lower center", bbox_to_anchor=(0.5, 1.0), frameon=False,
+        ncols=2, fontsize=6.0, handlelength=1.5, columnspacing=1.0,
     )
-    axis.legend(loc="lower left", frameon=True, ncols=2)
-    axis.grid(axis="x", visible=False)
-    figure.tight_layout(pad=0.7)
+    axis.grid(axis="y", visible=False)
+    axis.grid(axis="x", linewidth=0.45)
+    figure.subplots_adjust(left=0.25, right=0.91, bottom=0.20, top=0.88)
     figure.savefig(args.output / f"camera_ready_new_image2{suffix}.png", dpi=240, bbox_inches="tight")
     figure.savefig(args.output / f"camera_ready_new_image2{suffix}.pdf", bbox_inches="tight")
     plt.close(figure)

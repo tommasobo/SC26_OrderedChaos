@@ -9,6 +9,14 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Liberation Serif"],
+    "mathtext.fontset": "dejavuserif",
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+})
+
 
 METHOD_ORDER = ["ecmp", "rss", "rack_tlp", "rss_rack", "rss_tlp", "rss_rack_tlp", "pfld"]
 PAPER_METHOD_ORDER = ["ecmp", "oblivious", "reps", "rss", "pfld", "rss_rack_tlp"]

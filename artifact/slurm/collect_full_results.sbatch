@@ -10,6 +10,7 @@
 
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR}"
+PYTHON="${ORDEREDCHAOS_PYTHON:-${SCRATCH}/orderedchaos_ae/venv/bin/python}"
 
 required_variables=(
     ANALYTICAL_JOB FIG1A_JOB FIG1B_JOB FIG6_JOB MICRO_JOB MICRO_PLOT
@@ -163,5 +164,6 @@ if [[ -s "${SKIPPED_SUMMARY}" ]]; then
 else
     rm -f "${SKIPPED_SUMMARY}"
 fi
+"${PYTHON}" artifact/scripts/check_pdf_fonts.py "${RESULTS}"
 printf 'PASS\n' > "${RESULTS}/PASS"
 printf 'Named plots: %s\n' "${RESULTS}"

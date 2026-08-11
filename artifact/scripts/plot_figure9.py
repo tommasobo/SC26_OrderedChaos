@@ -120,7 +120,7 @@ def main() -> int:
     display_rss = display[display["scheme"] == "RSS Only"]
     display_pfld = display[display["scheme"] == "RSS+PFLD"]
 
-    sns.set_theme(style="whitegrid", context="paper")
+    sns.set_theme(style="whitegrid", context="paper", font="Liberation Serif")
     figure = plt.figure(figsize=(6.5, 2.7))
     grid = figure.add_gridspec(2, 2, height_ratios=[1, 3], width_ratios=[1, 1],
                               hspace=0.08, wspace=0.25)

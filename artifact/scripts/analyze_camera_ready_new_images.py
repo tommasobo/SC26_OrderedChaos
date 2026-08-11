@@ -16,6 +16,14 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Liberation Serif"],
+    "mathtext.fontset": "dejavuserif",
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+})
+
 import sys
 
 REPO = Path(__file__).resolve().parents[2]
@@ -111,6 +119,8 @@ def plot_fct(stats: pd.DataFrame, sampled: pd.DataFrame, rate: float, pfld_sourc
     # Keep the paper's 2 by 3 layout, trim colors, violin geometry, and
     # statistic convention. RACK is appended as one additional method.
     sns.set_style("whitegrid")
+    plt.rcParams["font.family"] = "serif"
+    plt.rcParams["font.serif"] = ["Liberation Serif"]
     figure, axes = plt.subplots(
         2, 3, figsize=(OLD_FIGURE9_WIDTH, OLD_FIGURE9_HEIGHT),
         sharex=True, sharey=False,
@@ -310,6 +320,8 @@ def plot_rto(
     if pfld_profile not in set(rtos["algorithm"]):
         raise ValueError(f"Requested PFLD profile {pfld_profile} is absent from the raw data")
     sns.set_style("whitegrid")
+    plt.rcParams["font.family"] = "serif"
+    plt.rcParams["font.serif"] = ["Liberation Serif"]
     final_frame = rto_plot_frame(rtos, rate, pfld_profile)
     final_frame.to_csv(output / "camera_ready_new_image2.csv", index=False)
     figure, axis = plt.subplots(figsize=(OLD_FIGURE10_WIDTH, OLD_FIGURE10_HEIGHT))

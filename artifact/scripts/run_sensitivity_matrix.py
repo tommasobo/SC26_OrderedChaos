@@ -166,7 +166,7 @@ def main() -> int:
     frame = pd.DataFrame(rows).pivot(index="subflows", columns="update_us", values="max_fct_us")
     frame.to_csv(args.output_root / "sensitivity_matrix.csv")
 
-    sns.set_theme(style="whitegrid", context="talk")
+    sns.set_theme(style="whitegrid", context="talk", font="Liberation Serif")
     fig, ax = plt.subplots(figsize=(5.5, 3.75))
     annotations = frame.round(0).map(lambda value: f"{int(value):d}")
     sns.heatmap(frame, annot=annotations, fmt="s", cmap="rocket_r", linewidths=0.5,

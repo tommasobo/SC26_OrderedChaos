@@ -77,7 +77,9 @@ def main() -> int:
     frame.to_csv(args.output / "figure5_memory_bytes.csv", index=False)
 
     long = frame.melt(id_vars="active_flows", var_name="Variant", value_name="Total bytes")
-    sns.set_theme(style="whitegrid", context="paper", palette="Set2")
+    sns.set_theme(
+        style="whitegrid", context="paper", palette="Set2", font="Liberation Serif"
+    )
     plt.rcParams.update({"font.size": 11.4})
     fig, ax = plt.subplots(figsize=(4.55, 1.75))
     sns.lineplot(data=long, x="active_flows", y="Total bytes", hue="Variant",
