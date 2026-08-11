@@ -52,7 +52,7 @@ STRESS_DISPLAY_ORDER = (
     "pfld_probe_rtt_no_rtx",
 )
 STRESS_LABELS = (
-    "Tail → P=16",
+    "Tail →\nP=16",
     "P=8",
     "P=4",
     "P=1",
