@@ -18,7 +18,8 @@ In this host-only artifact, the full workflow additionally regenerates the
 corrected section/tail probe compounding study and the periodic-probe incast
 stress study. Their two panels are collected as one PDF/PNG figure in the
 final result directory's `ExtraFigures/` subdirectory and are formatted for
-single-column paper placement.
+single-column paper placement. A companion LaTeX caption defines the compact
+probe notation and records the hidden experimental context.
 
 Slurm is supported and recommended for the full workflow because independent
 experiment groups can run concurrently:

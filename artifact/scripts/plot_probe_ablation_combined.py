@@ -24,14 +24,16 @@ STACK_ORDER = (
 )
 STACK_DISPLAY_ORDER = (
     "pfld_no_probes",
+    "pfld_tail_only",
     "pfld_probe16_no_rtx",
     "pfld_probe1_no_rtx",
     "pfld_probe1",
 )
 STACK_LABELS = (
     "PSN",
-    "+ Tail → X16",
-    "+ Periodic X1",
+    "+ Tail",
+    "+ P=16",
+    "+ P=1",
     "+ RTX",
 )
 STRESS_ORDER = (
@@ -50,10 +52,10 @@ STRESS_DISPLAY_ORDER = (
     "pfld_probe_rtt_no_rtx",
 )
 STRESS_LABELS = (
-    "Tail → X16",
-    "X8",
-    "X4",
-    "X1",
+    "Tail → P=16",
+    "P=8",
+    "P=4",
+    "P=1",
     "RTT",
 )
 
@@ -120,7 +122,7 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
     low = displayed.normal95_low_rto_events.to_numpy(float)
     high = displayed.normal95_high_rto_events.to_numpy(float)
     positions = np.arange(len(STACK_DISPLAY_ORDER))
-    colors = (GRAY, TEAL_LIGHT, TEAL_DARK, ORANGE)
+    colors = (GRAY, TEAL_LIGHT, TEAL, TEAL_DARK, ORANGE)
 
     for position, mean, color in zip(positions, means, colors):
         axis.hlines(position, 0, mean, color=color, linewidth=3.0,
@@ -149,13 +151,18 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
     axis.set_title("Tornado Pattern - 8MiB", fontsize=7.4,
                    fontweight="bold", pad=5)
 
-    tail_mean = float(summary.loc["pfld_tail_only", "mean_rto_events"])
     for index, mean in enumerate(means):
-        label = (f"{compact(tail_mean)}→{compact(mean)}"
-                 if index == 1 else compact(mean))
-        x = max(mean, 0.0) + limit * 0.018
-        axis.text(x, index, label, ha="left", va="center", fontsize=5.6,
-                  fontweight="bold" if index == len(means) - 1 else "normal")
+        axis.annotate(
+            compact(mean),
+            xy=(mean, index),
+            xytext=(5, 0),
+            textcoords="offset points",
+            ha="left",
+            va="center",
+            fontsize=5.6,
+            fontweight="bold" if index == len(means) - 1 else "normal",
+            annotation_clip=False,
+        )
 
 
 def draw_stress(axis: plt.Axes, summary: pd.DataFrame) -> None:
@@ -196,14 +203,23 @@ def draw_stress(axis: plt.Axes, summary: pd.DataFrame) -> None:
         label = (f"{compact(tail_mean)}→{compact(mean)}"
                  if index == 0 else compact(mean))
         if mean > 1000:
-            x = mean / 1.10
+            offset = -5
             alignment = "right"
         else:
-            x = mean * 1.10
+            offset = 5
             alignment = "left"
-        axis.text(x, index, label, ha=alignment, va="center", fontsize=5.6,
-                  bbox={"facecolor": "white", "edgecolor": "none",
-                        "alpha": 0.72, "pad": 0.25})
+        axis.annotate(
+            label,
+            xy=(mean, index),
+            xytext=(offset, 0),
+            textcoords="offset points",
+            ha=alignment,
+            va="center",
+            fontsize=5.6,
+            bbox={"facecolor": "white", "edgecolor": "none",
+                  "alpha": 0.78, "pad": 0.25},
+            annotation_clip=False,
+        )
 
 
 def draw(compounding: pd.DataFrame, stress: pd.DataFrame,

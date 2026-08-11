@@ -125,6 +125,9 @@ copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/probe_ablation/camera_ready_probe_ablation" \
     "Camera_Ready_Probe_Ablation" \
     "${EXTRA_FIGURES}"
+cp \
+    artifact/data/camera_ready_probe_ablation_caption.tex \
+    "${EXTRA_FIGURES}/Camera_Ready_Probe_Ablation_caption.tex"
 
 cp \
     "${SCRATCH}/orderedchaos_ae/analysis/analytical-${ANALYTICAL_JOB}/memory-claim-implied-4000b/table1_formulas.csv" \
