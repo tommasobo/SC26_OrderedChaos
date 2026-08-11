@@ -25,20 +25,22 @@ done
 
 RESULTS_BASE="${ORDEREDCHAOS_RESULTS_DIR:-${SCRATCH}/orderedchaos_ae/results}"
 RESULTS="${RESULTS_BASE}/full-${SLURM_JOB_ID}"
+EXTRA_FIGURES="${RESULTS}/ExtraFigures"
 if [[ -e "${RESULTS}" ]]; then
     echo "Refusing existing result directory: ${RESULTS}" >&2
     exit 2
 fi
-mkdir -p "${RESULTS}"
+mkdir -p "${RESULTS}" "${EXTRA_FIGURES}"
 SKIPPED_SUMMARY="${RESULTS}/SKIPPED_RESULTS.txt"
 
 copy_pair() {
     local source_base=$1
     local output_stem=$2
+    local destination="${3:-${RESULTS}}"
     local extension
     for extension in pdf png; do
         test -s "${source_base}.${extension}"
-        cp "${source_base}.${extension}" "${RESULTS}/${output_stem}.${extension}"
+        cp "${source_base}.${extension}" "${destination}/${output_stem}.${extension}"
     done
 }
 
@@ -121,10 +123,12 @@ copy_pair \
     "Camera_Ready_New_Image_2_Linear"
 copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/probe_compounding/camera_ready_probe_compounding" \
-    "Camera_Ready_Probe_Compounding"
+    "Camera_Ready_Probe_Compounding" \
+    "${EXTRA_FIGURES}"
 copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/periodic_probe_stress/camera_ready_periodic_probe_stress" \
-    "Camera_Ready_Periodic_Probe_Stress"
+    "Camera_Ready_Periodic_Probe_Stress" \
+    "${EXTRA_FIGURES}"
 
 cp \
     "${SCRATCH}/orderedchaos_ae/analysis/analytical-${ANALYTICAL_JOB}/memory-claim-implied-4000b/table1_formulas.csv" \
