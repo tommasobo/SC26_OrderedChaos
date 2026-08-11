@@ -17,7 +17,8 @@ the simulator, and writes clearly named plots under `results/`.
 In this host-only artifact, the full workflow additionally regenerates the
 corrected section/tail probe compounding study and the periodic-probe incast
 stress study. Their two panels are collected as one PDF/PNG figure in the
-final result directory's `ExtraFigures/` subdirectory.
+final result directory's `ExtraFigures/` subdirectory and are formatted for
+single-column paper placement.
 
 Slurm is supported and recommended for the full workflow because independent
 experiment groups can run concurrently:

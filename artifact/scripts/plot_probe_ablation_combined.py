@@ -23,11 +23,11 @@ STACK_ORDER = (
     "pfld_probe1",
 )
 STACK_LABELS = (
-    "PSN gaps only",
-    "+ Section/tail probes",
-    "+ Periodic probes (X=16)",
-    "+ Denser probes (X=1)",
-    "+ RTX probes",
+    "PSN",
+    "+ Section/tail",
+    "+ Periodic X16",
+    "+ Periodic X1",
+    "+ RTX",
 )
 STRESS_ORDER = (
     "pfld_tail_only",
@@ -38,12 +38,12 @@ STRESS_ORDER = (
     "pfld_probe_rtt_no_rtx",
 )
 STRESS_LABELS = (
-    "Section/tail only",
-    "Periodic X=16",
-    "Periodic X=8",
-    "Periodic X=4",
-    "Periodic X=1",
-    "Periodic once/RTT",
+    "Section/tail",
+    "X=16",
+    "X=8",
+    "X=4",
+    "X=1",
+    "Once/RTT",
 )
 
 # The main camera-ready plots use seaborn's Set2 trim colors. Reuse those
@@ -120,7 +120,7 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
         height=0.62,
         color=colors,
         edgecolor="black",
-        linewidth=0.75,
+        linewidth=0.5,
         zorder=2,
     )
     axis.errorbar(
@@ -129,25 +129,23 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
         xerr=[means - low, high - means],
         fmt="none",
         ecolor="black",
-        elinewidth=1.0,
-        capsize=3,
+        elinewidth=0.7,
+        capsize=2,
         zorder=4,
     )
     # A zero-height bar is otherwise invisible; keep the successful final
     # stage explicit without inventing a nonzero plotting value.
-    axis.scatter([0], [positions[-1]], marker="D", s=28, color=ORANGE,
-                 edgecolor="black", linewidth=0.65, zorder=5, clip_on=False)
+    axis.scatter([0], [positions[-1]], marker="D", s=14, color=ORANGE,
+                 edgecolor="black", linewidth=0.45, zorder=5, clip_on=False)
 
     limit = float(high.max()) * 1.30
     axis.set_xlim(0, limit)
     axis.set_yticks(positions, STACK_LABELS)
     axis.invert_yaxis()
-    axis.set_xlabel("Mean RTO events per run")
+    axis.set_xlabel("Mean RTOs/run")
     axis.grid(axis="y", visible=False)
-    axis.set_title("a  Recovery mechanisms compound", loc="left",
-                   fontsize=11, fontweight="bold", pad=25)
-    axis.text(0.0, 1.015, "128-node tornado · 8 MiB per flow",
-              transform=axis.transAxes, ha="left", va="bottom", fontsize=9)
+    axis.set_title("Tornado Pattern - 8MiB", fontsize=7.4,
+                   fontweight="bold", pad=5)
 
     for index, mean in enumerate(means):
         if index == 0:
@@ -157,7 +155,7 @@ def draw_stack(axis: plt.Axes, summary: pd.DataFrame) -> None:
             change = "≈0%" if abs(reduction) < 0.5 else f"−{reduction:.0f}%"
             label = f"{compact(mean)}  ({change})"
         x = max(mean, 0.0) + limit * 0.018
-        axis.text(x, index, label, ha="left", va="center", fontsize=8.5,
+        axis.text(x, index, label, ha="left", va="center", fontsize=5.6,
                   fontweight="bold" if index == len(means) - 1 else "normal")
 
 
@@ -170,7 +168,7 @@ def draw_stress(axis: plt.Axes, summary: pd.DataFrame) -> None:
     origin = 20.0
 
     for position, mean, color in zip(positions, means, colors):
-        axis.hlines(position, origin, mean, color=color, linewidth=5.0,
+        axis.hlines(position, origin, mean, color=color, linewidth=3.0,
                     alpha=0.88, zorder=2)
     axis.errorbar(
         means,
@@ -178,40 +176,44 @@ def draw_stress(axis: plt.Axes, summary: pd.DataFrame) -> None:
         xerr=[means - low, high - means],
         fmt="none",
         ecolor="black",
-        elinewidth=1.0,
-        capsize=3,
+        elinewidth=0.7,
+        capsize=2,
         zorder=4,
     )
-    axis.scatter(means, positions, s=66, c=colors, edgecolor="black",
-                 linewidth=0.75, zorder=5)
+    axis.scatter(means, positions, s=30, c=colors, edgecolor="black",
+                 linewidth=0.5, zorder=5)
     axis.set_xscale("log")
-    axis.set_xlim(origin, float(high.max()) * 2.0)
-    axis.set_yticks(positions, STRESS_LABELS)
-    axis.invert_yaxis()
-    axis.set_xlabel("Mean RTO events per run (log scale)")
-    axis.grid(axis="y", visible=False)
-    axis.set_title("b  Periodic probes matter under contention", loc="left",
-                   fontsize=11, fontweight="bold", pad=25)
-    axis.text(0.0, 1.015, "32-to-1 incast · 4 MiB per sender",
-              transform=axis.transAxes, ha="left", va="bottom", fontsize=9)
-
+    axis.set_xlim(origin, float(high.max()) * 1.55)
     baseline = means[0]
+    tick_labels = [STRESS_LABELS[0]]
+    for label, mean in zip(STRESS_LABELS[1:], means[1:]):
+        reduction = signed_reduction(baseline, mean)
+        change = f"−{reduction:.1f}%" if abs(reduction) < 1.0 else f"−{reduction:.0f}%"
+        tick_labels.append(f"{label} ({change})")
+    axis.set_yticks(positions, tick_labels)
+    axis.invert_yaxis()
+    axis.set_xlabel("Mean RTOs/run (log)")
+    axis.grid(axis="y", visible=False)
+    axis.set_title("Incast 32:1 - 4MiB", fontsize=7.4,
+                   fontweight="bold", pad=5)
+
     for index, mean in enumerate(means):
-        if index == 0:
-            label = compact(mean)
+        label = compact(mean)
+        if mean > 1000:
+            x = mean / 1.10
+            alignment = "right"
         else:
-            reduction = signed_reduction(baseline, mean)
-            change = "≈ baseline" if abs(reduction) < 0.5 else f"−{reduction:.0f}%"
-            label = f"{compact(mean)}  ({change})"
-        axis.text(mean * 1.10, index, label, ha="left", va="center", fontsize=8.5)
+            x = mean * 1.10
+            alignment = "left"
+        axis.text(x, index, label, ha=alignment, va="center", fontsize=5.6,
+                  bbox={"facecolor": "white", "edgecolor": "none",
+                        "alpha": 0.72, "pad": 0.25})
 
 
 def draw(compounding: pd.DataFrame, stress: pd.DataFrame,
          args: argparse.Namespace) -> None:
     if int(compounding.seeds.min()) != int(stress.seeds.min()):
         raise RuntimeError("The two panels do not use the same number of matched seeds")
-    seeds = int(compounding.seeds.min())
-
     sns.set_theme(
         style="whitegrid",
         context="paper",
@@ -219,51 +221,31 @@ def draw(compounding: pd.DataFrame, stress: pd.DataFrame,
             "axes.edgecolor": "#b8b8b8",
             "axes.linewidth": 0.8,
             "grid.color": "#d2d2d2",
-            "grid.linewidth": 0.8,
+            "grid.linewidth": 0.55,
             "font.family": "sans-serif",
+            "font.size": 6.0,
+            "axes.labelsize": 6.2,
+            "xtick.labelsize": 5.6,
+            "ytick.labelsize": 5.8,
+            "xtick.major.pad": 1.5,
+            "ytick.major.pad": 1.5,
         },
     )
     figure, (stack_axis, stress_axis) = plt.subplots(
         1,
         2,
-        figsize=(12.4, 4.35),
-        gridspec_kw={"width_ratios": (1.02, 1.0), "wspace": 0.34},
+        figsize=(3.5, 2.25),
+        gridspec_kw={"width_ratios": (1.0, 1.0), "wspace": 0.78},
     )
     draw_stack(stack_axis, compounding)
     draw_stress(stress_axis, stress)
 
-    figure.suptitle(
-        "PFLD probe ablation",
-        x=0.5,
-        y=0.995,
-        fontsize=13,
-        fontweight="bold",
-    )
-    figure.text(
-        0.5,
-        0.945,
-        f"Trimming off · corruption probability {args.drop_rate:g} · "
-        f"{seeds} matched seeds",
-        ha="center",
-        va="center",
-        fontsize=9.5,
-    )
-    figure.text(
-        0.5,
-        0.015,
-        "Whiskers: normal 95% CI (mean ± 1.96 SEM). "
-        "Percentages compare with the previous step (a) or section/tail-only (b).",
-        ha="center",
-        va="bottom",
-        fontsize=7.8,
-        color="#4f4f4f",
-    )
-    figure.subplots_adjust(left=0.16, right=0.985, bottom=0.17, top=0.82)
+    figure.subplots_adjust(left=0.205, right=0.99, bottom=0.22, top=0.88)
 
     args.output.mkdir(parents=True, exist_ok=True)
     stem = args.output / "camera_ready_probe_ablation"
-    figure.savefig(stem.with_suffix(".png"), dpi=240, bbox_inches="tight")
-    figure.savefig(stem.with_suffix(".pdf"), bbox_inches="tight")
+    figure.savefig(stem.with_suffix(".png"), dpi=320)
+    figure.savefig(stem.with_suffix(".pdf"))
     plt.close(figure)
 
 
