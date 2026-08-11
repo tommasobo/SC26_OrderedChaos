@@ -15,9 +15,9 @@ Run the complete workflow locally:
 The local runner provisions the pinned Python environment, builds and tests
 the simulator, and writes clearly named plots under `results/`.
 In this host-only artifact, the full workflow additionally regenerates the
-corrected section/tail probe compounding figure and the periodic-probe incast
-stress ablation. Their PDF and PNG outputs are collected in the final result
-directory's `ExtraFigures/` subdirectory.
+corrected section/tail probe compounding study and the periodic-probe incast
+stress study. Their two panels are collected as one PDF/PNG figure in the
+final result directory's `ExtraFigures/` subdirectory.
 
 Slurm is supported and recommended for the full workflow because independent
 experiment groups can run concurrently:

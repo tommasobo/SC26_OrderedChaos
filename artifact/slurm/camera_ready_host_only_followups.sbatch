@@ -56,4 +56,14 @@ mkdir -p "${ANALYSIS}" "${MEASURE}"
     > "${MEASURE}/periodic_probe_stress_plot.out" \
     2> "${MEASURE}/periodic_probe_stress_plot.err"
 
+/usr/bin/time -v -o "${MEASURE}/probe_ablation_combined_plot.time" \
+    "${PYTHON}" artifact/scripts/plot_probe_ablation_combined.py \
+    --compounding-summary \
+    "${ANALYSIS}/probe_compounding/camera_ready_probe_compounding_summary.csv" \
+    --stress-summary \
+    "${ANALYSIS}/periodic_probe_stress/camera_ready_periodic_probe_stress_summary.csv" \
+    --output "${ANALYSIS}/probe_ablation" --drop-rate 0.005 \
+    > "${MEASURE}/probe_ablation_combined_plot.out" \
+    2> "${MEASURE}/probe_ablation_combined_plot.err"
+
 printf 'PASS\n' > "${ANALYSIS}/PASS"

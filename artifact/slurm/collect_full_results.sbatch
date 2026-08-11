@@ -122,12 +122,8 @@ copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-incast-${CAMERA_INCAST_JOB}/camera_ready_new_image2_linear" \
     "Camera_Ready_New_Image_2_Linear"
 copy_pair \
-    "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/probe_compounding/camera_ready_probe_compounding" \
-    "Camera_Ready_Probe_Compounding" \
-    "${EXTRA_FIGURES}"
-copy_pair \
-    "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/periodic_probe_stress/camera_ready_periodic_probe_stress" \
-    "Camera_Ready_Periodic_Probe_Stress" \
+    "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/probe_ablation/camera_ready_probe_ablation" \
+    "Camera_Ready_Probe_Ablation" \
     "${EXTRA_FIGURES}"
 
 cp \
