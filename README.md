@@ -85,10 +85,10 @@ ORDEREDCHAOS_JOBS=4 ./reproduce.sh short
 Generated plots are placed in `results/short-<run-id>` or
 `results/full-<run-id>`. Successful runs contain a `PASS` file.
 The full workflow also regenerates the host-only section/tail compounding and
-32-to-1 periodic-probe stress studies. It presents them as two panels of one
-camera-ready probe-ablation figure, whose PDF and PNG are collected under
-`results/full-<run-id>/ExtraFigures/`. The numbered and established
-camera-ready results remain in the parent result directory.
+32-to-1 periodic-probe stress studies. All supplementary camera-ready outputs
+are collected under `results/full-<run-id>/ExtraFigures/`: the Google RPC FCT
+distributions, the timeout-event plots, and the two-panel probe-ablation
+figure. Numbered `Figure_*` results remain in the parent result directory.
 Figures 11 and 12 use checksum-verified binary traces from the public SPCL
 server. If one of these input families cannot be downloaded, the workflow
 continues with every independent result and places a clearly named

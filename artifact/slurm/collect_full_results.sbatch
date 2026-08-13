@@ -115,13 +115,16 @@ copy_pair \
     "Figure_14B"
 copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-new-images-${CAMERA_JOB}-analysis-${CAMERA_PLOT}/figure_axis/camera_ready_new_image1" \
-    "Camera_Ready_New_Image_1"
+    "Camera_Ready_New_Image_1" \
+    "${EXTRA_FIGURES}"
 copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-incast-${CAMERA_INCAST_JOB}/camera_ready_new_image2" \
-    "Camera_Ready_New_Image_2"
+    "Camera_Ready_New_Image_2" \
+    "${EXTRA_FIGURES}"
 copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-ready-incast-${CAMERA_INCAST_JOB}/camera_ready_new_image2_linear" \
-    "Camera_Ready_New_Image_2_Linear"
+    "Camera_Ready_New_Image_2_Linear" \
+    "${EXTRA_FIGURES}"
 copy_pair \
     "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/probe_ablation/camera_ready_probe_ablation" \
     "Camera_Ready_Probe_Ablation" \
@@ -129,6 +132,15 @@ copy_pair \
 cp \
     artifact/data/camera_ready_probe_ablation_caption.tex \
     "${EXTRA_FIGURES}/Camera_Ready_Probe_Ablation_caption.tex"
+
+shopt -s nullglob
+misplaced_camera_ready_images=("${RESULTS}"/Camera_Ready_New_Image*)
+shopt -u nullglob
+if (( ${#misplaced_camera_ready_images[@]} != 0 )); then
+    printf 'Supplementary camera-ready image found outside ExtraFigures:\n' >&2
+    printf '  %s\n' "${misplaced_camera_ready_images[@]}" >&2
+    exit 1
+fi
 
 cp \
     "${SCRATCH}/orderedchaos_ae/analysis/analytical-${ANALYTICAL_JOB}/memory-claim-implied-4000b/table1_formulas.csv" \

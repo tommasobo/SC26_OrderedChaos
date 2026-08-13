@@ -14,12 +14,14 @@ Run the complete workflow locally:
 
 The local runner provisions the pinned Python environment, builds and tests
 the simulator, and writes clearly named plots under `results/`.
-In this host-only artifact, the full workflow additionally regenerates the
-corrected section/tail probe compounding study and the periodic-probe incast
-stress study. Their two panels are collected as one PDF/PNG figure in the
-final result directory's `ExtraFigures/` subdirectory and are formatted for
-single-column paper placement. A companion LaTeX caption defines the compact
-probe notation and records the hidden experimental context.
+In this host-only artifact, the full workflow collects all supplementary
+camera-ready outputs in the final result directory's `ExtraFigures/`
+subdirectory. These include the Google RPC FCT distributions, both
+timeout-event plots, and the two-panel probe-ablation figure regenerated from
+the corrected section/tail compounding and periodic-probe incast stress
+studies. The probe-ablation figure is formatted for single-column paper
+placement; its companion LaTeX caption defines the compact probe notation and
+records the hidden experimental context.
 
 Plotting uses the repository-level `matplotlibrc`, which prefers Liberation
 Serif and falls back to Matplotlib's bundled DejaVu Serif without an extra
