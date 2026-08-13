@@ -45,7 +45,9 @@ Archived artifact: [https://doi.org/10.5281/zenodo.21542397](https://doi.org/10.
 ## Requirements
 
 - Linux, Git, curl, CMake 3.16 or newer, GCC/G++, and GNU time
-- Liberation Serif TrueType fonts (commonly provided by `fonts-liberation`)
+- Liberation Serif TrueType fonts are preferred (commonly provided by
+  `fonts-liberation`). If unavailable, the workflow automatically uses DejaVu
+  Serif, which is bundled with the pinned Matplotlib package.
 - 16 GiB of memory for the short workflow
 - 32 GiB of memory and 100 GiB of free disk space for the full workflow
 
@@ -93,7 +95,10 @@ continues with every independent result and places a clearly named
 `Figure_11_SKIPPED.txt` or `Figure_12_SKIPPED.txt` record in the result
 directory.
 
-All generated PDF plots use Liberation Serif embedded as TrueType outlines.
+Generated plots prefer Liberation Serif and automatically fall back to the
+Matplotlib-bundled DejaVu Serif when Liberation is unavailable. Both are
+embedded as TrueType outlines, and the fallback needs no extra system package
+or font download.
 Before writing `PASS`, the collection workflow runs
 `artifact/scripts/check_pdf_fonts.py` and rejects any PDF containing a Type 3
 or unembedded font.

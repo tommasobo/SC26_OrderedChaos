@@ -29,7 +29,7 @@ def main() -> int:
     args.output.mkdir(parents=True, exist_ok=False)
     frame = pd.read_csv(args.input)
     matrix = frame.pivot(index="subflows", columns="update_us", values="median_max_fct_us")
-    sns.set_theme(style="whitegrid", context="talk", font="Liberation Serif")
+    sns.set_theme(style="whitegrid", context="talk", font="serif")
     figure, axis = plt.subplots(figsize=(5.5, 3.75))
     annotations = matrix.round(0).map(lambda value: f"{int(value):d}")
     sns.heatmap(

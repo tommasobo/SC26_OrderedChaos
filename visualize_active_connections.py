@@ -126,7 +126,7 @@ def plot_timeseries(
     out_path: Optional[str],
     dpi: int,
 ):
-    sns.set_theme(style="whitegrid", palette="Set2", font="Liberation Serif")
+    sns.set_theme(style="whitegrid", palette="Set2", font="serif")
     plt.figure(figsize=(10, 5.5))
     ax = plt.gca()
 

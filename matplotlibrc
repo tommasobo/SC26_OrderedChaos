@@ -1,9 +1,10 @@
 # SC26 requires embedded scalable fonts in every submitted figure.
-# Liberation Serif is metric-compatible with Times and is available in the
-# pinned artifact environment. Type 42 embeds the TrueType outlines in PDF/PS
-# output instead of Matplotlib's non-compliant Type 3 glyphs.
+# Liberation Serif is the preferred Times-compatible paper font. DejaVu Serif
+# ships with Matplotlib and is the offline fallback when Liberation Serif is
+# unavailable. Type 42 embeds either TrueType face in PDF/PS output instead of
+# Matplotlib's non-compliant Type 3 glyphs.
 font.family: serif
-font.serif: Liberation Serif
+font.serif: Liberation Serif, DejaVu Serif
 mathtext.fontset: dejavuserif
 pdf.fonttype: 42
 ps.fonttype: 42

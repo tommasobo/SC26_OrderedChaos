@@ -113,11 +113,12 @@ from matplotlib import font_manager
 
 try:
     font_manager.findfont("Liberation Serif", fallback_to_default=False)
-except ValueError as error:
-    raise SystemExit(
-        "Liberation Serif TrueType fonts are required for paper-compliant plots. "
-        "Install the fonts-liberation package and rerun setup."
-    ) from error
+    plot_font = "Liberation Serif"
+except ValueError:
+    # DejaVu Serif is distributed with Matplotlib, so this path requires no
+    # operating-system package or additional network download.
+    font_manager.findfont("DejaVu Serif", fallback_to_default=False)
+    plot_font = "DejaVu Serif (offline fallback)"
 
 print("OrderedChaos Python environment is ready")
 print("numpy", numpy.__version__)
@@ -126,6 +127,7 @@ print("matplotlib", matplotlib.__version__)
 print("seaborn", seaborn.__version__)
 print("scipy", scipy.__version__)
 print("PyMuPDF", fitz.version[0])
+print("plot font", plot_font)
 PY
 
 printf 'Activate with: source %s/bin/activate\n' "${VENV}"

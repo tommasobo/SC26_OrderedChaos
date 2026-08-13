@@ -33,7 +33,7 @@ import numpy as np
 
 plt.rcParams.update({
     "font.family": "serif",
-    "font.serif": ["Liberation Serif"],
+    "font.serif": ["Liberation Serif", "DejaVu Serif"],
     "mathtext.fontset": "dejavuserif",
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
@@ -433,7 +433,7 @@ def collect_loss_counts_dataset(root: Path) -> pd.DataFrame:
 def make_plot(df: pd.DataFrame, output_path: Path, style: str, palette: str, title_zero: str, title_positive: str, inner_style: str, separate_y: bool, annot_stats: bool, ideal_fct: float | None, no_show: bool, padding: bool, y_label: str | None, x_label_map: Dict[str, str], only_positive: bool, mark_max: bool, loss_counts: Dict[str, int] | None = None):
     sns.set_style(style)
     plt.rcParams["font.family"] = "serif"
-    plt.rcParams["font.serif"] = ["Liberation Serif"]
+    plt.rcParams["font.serif"] = ["Liberation Serif", "DejaVu Serif"]
 
     # Determine multi-seed mode
     unique_seeds = df['seed'].nunique()
@@ -692,7 +692,7 @@ def make_plot(df: pd.DataFrame, output_path: Path, style: str, palette: str, tit
 def make_bar_plot(df_counts: pd.DataFrame, output_path: Path, style: str, palette: str, title_zero: str, title_positive: str, only_positive: bool, x_label_map: Dict[str, str], compress: bool):
     sns.set_style(style)
     plt.rcParams["font.family"] = "serif"
-    plt.rcParams["font.serif"] = ["Liberation Serif"]
+    plt.rcParams["font.serif"] = ["Liberation Serif", "DejaVu Serif"]
 
     if df_counts is None or df_counts.empty:
         print("No lost-packet data found to plot.")

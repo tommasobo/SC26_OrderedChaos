@@ -12,7 +12,7 @@ import numpy as np
 
 plt.rcParams.update({
     "font.family": "serif",
-    "font.serif": ["Liberation Serif"],
+    "font.serif": ["Liberation Serif", "DejaVu Serif"],
     "mathtext.fontset": "dejavuserif",
     "pdf.fonttype": 42,
     "ps.fonttype": 42,

@@ -78,7 +78,7 @@ def main() -> int:
 
     long = frame.melt(id_vars="active_flows", var_name="Variant", value_name="Total bytes")
     sns.set_theme(
-        style="whitegrid", context="paper", palette="Set2", font="Liberation Serif"
+        style="whitegrid", context="paper", palette="Set2", font="serif"
     )
     plt.rcParams.update({"font.size": 11.4})
     fig, ax = plt.subplots(figsize=(4.55, 1.75))

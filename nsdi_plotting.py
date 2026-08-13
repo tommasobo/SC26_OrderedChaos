@@ -33,7 +33,7 @@ import numpy as np
 
 plt.rcParams.update({
     "font.family": "serif",
-    "font.serif": ["Liberation Serif"],
+    "font.serif": ["Liberation Serif", "DejaVu Serif"],
     "mathtext.fontset": "dejavuserif",
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
@@ -207,7 +207,7 @@ def collect_data(root: Path, min_flows: int, only_max: bool = False) -> pd.DataF
 def make_plot(df: pd.DataFrame, output_path: Path, style: str, palette: str, title_zero: str, title_positive: str, inner_style: str, separate_y: bool, annot_stats: bool, ideal_fct: float | None, no_show: bool, padding: bool, y_label: str | None, x_label_map: Dict[str, str], only_positive: bool, comm_only: bool):
     sns.set_style(style)
     plt.rcParams["font.family"] = "serif"
-    plt.rcParams["font.serif"] = ["Liberation Serif"]
+    plt.rcParams["font.serif"] = ["Liberation Serif", "DejaVu Serif"]
 
     # Determine multi-seed mode
     unique_seeds = df['seed'].nunique()

@@ -122,7 +122,7 @@ def summarize(frame: pd.DataFrame) -> pd.DataFrame:
 
 def draw(frame: pd.DataFrame, summary: pd.DataFrame, args: argparse.Namespace, scale: str) -> None:
     sns.set_theme(
-        style="whitegrid", context="paper", font="Liberation Serif",
+        style="whitegrid", context="paper", font="serif",
         rc={"pdf.fonttype": 42, "ps.fonttype": 42, "mathtext.fontset": "dejavuserif"},
     )
     figure, axis = plt.subplots(figsize=(3.5, 2.6))
