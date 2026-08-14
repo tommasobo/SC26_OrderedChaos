@@ -14,7 +14,7 @@ Run the complete workflow locally:
 
 The local runner provisions the pinned Python environment, builds and tests
 the simulator, and writes clearly named plots under `results/`.
-In this host-only artifact, the full workflow collects all supplementary
+The full workflow collects all supplementary
 camera-ready outputs in the final result directory's `ExtraFigures/`
 subdirectory. These include the Google RPC FCT distributions, both
 timeout-event plots, and the two-panel probe-ablation figure regenerated from

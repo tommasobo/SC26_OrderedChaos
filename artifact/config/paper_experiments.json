@@ -3,7 +3,7 @@
     "pflr_probe_interval": 1,
     "scope": "Figures 7 through 12 and both camera-ready experiments",
     "outside_scope": "Retain the original artifact configuration",
-    "implementation": "Host-only trim/probe NACK coalescing; switch and queue source match main"
+    "implementation": "End-host trim/probe NACK coalescing; optional switch-assisted FIFO and coalescing are outside scope"
   },
   "algorithm_profiles": {
     "ecmp": {
@@ -66,19 +66,6 @@
         "-pflr_receiver_trim_probe_coalescing"
       ]
     },
-    "pfld_probe1_accept_promoted": {
-      "load_balancing_algo": "rss",
-      "extra_args": [
-        "-precisefastlossrecovery",
-        "3",
-        "-pflr_proactive_probe",
-        "1",
-        "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header",
-        "-pflr_receiver_trim_probe_coalescing",
-        "-pflr_accept_header_promoted_probes"
-      ]
-    },
     "pfld_no_probes": {
       "load_balancing_algo": "rss",
       "extra_args": [
@@ -94,16 +81,6 @@
       "extra_args": [
         "-precisefastlossrecovery",
         "3",
-        "-no_droping_low_header",
-        "-pflr_receiver_trim_probe_coalescing"
-      ]
-    },
-    "pfld_tail_rtx": {
-      "load_balancing_algo": "rss",
-      "extra_args": [
-        "-precisefastlossrecovery",
-        "3",
-        "-pflr_proactive_rtx_probe",
         "-no_droping_low_header",
         "-pflr_receiver_trim_probe_coalescing"
       ]
@@ -163,54 +140,6 @@
         "-pflr_receiver_trim_probe_coalescing"
       ]
     },
-    "pfld_probe_rtt": {
-      "load_balancing_algo": "rss",
-      "extra_args": [
-        "-precisefastlossrecovery",
-        "3",
-        "-pflr_proactive_probe",
-        "0",
-        "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header",
-        "-pflr_receiver_trim_probe_coalescing"
-      ]
-    },
-    "pfld_probe4": {
-      "load_balancing_algo": "rss",
-      "extra_args": [
-        "-precisefastlossrecovery",
-        "3",
-        "-pflr_proactive_probe",
-        "4",
-        "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header",
-        "-pflr_receiver_trim_probe_coalescing"
-      ]
-    },
-    "pfld_probe8": {
-      "load_balancing_algo": "rss",
-      "extra_args": [
-        "-precisefastlossrecovery",
-        "3",
-        "-pflr_proactive_probe",
-        "8",
-        "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header",
-        "-pflr_receiver_trim_probe_coalescing"
-      ]
-    },
-    "pfld_probe16": {
-      "load_balancing_algo": "rss",
-      "extra_args": [
-        "-precisefastlossrecovery",
-        "3",
-        "-pflr_proactive_probe",
-        "16",
-        "-pflr_proactive_rtx_probe",
-        "-no_droping_low_header",
-        "-pflr_receiver_trim_probe_coalescing"
-      ]
-    },
     "rss_rack_tlp": {
       "load_balancing_algo": "rss",
       "extra_args": [
@@ -259,20 +188,6 @@
             "rss1",
             "rss_rack_tlp"
           ]
-        },
-        "camera_workload_screen": {
-          "drop_rates": [
-            0.005
-          ],
-          "trim_modes": [
-            "off",
-            "on"
-          ],
-          "seeds": 3,
-          "algorithms": [
-            "rss1",
-            "rss_rack_tlp"
-          ]
         }
       }
     },
@@ -311,20 +226,6 @@
             "oblivious",
             "reps",
             "rss",
-            "rss1",
-            "rss_rack_tlp"
-          ]
-        },
-        "camera_workload_screen": {
-          "drop_rates": [
-            0.005
-          ],
-          "trim_modes": [
-            "off",
-            "on"
-          ],
-          "seeds": 3,
-          "algorithms": [
             "rss1",
             "rss_rack_tlp"
           ]
@@ -444,23 +345,6 @@
             "oblivious",
             "reps",
             "rss",
-            "rss1",
-            "rss_rack_tlp"
-          ]
-        },
-        "camera_workload_screen": {
-          "parameter_overrides": {
-            "rto_ratio": 1
-          },
-          "drop_rates": [
-            0.005
-          ],
-          "trim_modes": [
-            "off",
-            "on"
-          ],
-          "seeds": 3,
-          "algorithms": [
             "rss1",
             "rss_rack_tlp"
           ]
@@ -888,34 +772,6 @@
             "rss",
             "pfld",
             "rss_rack_tlp"
-          ]
-        },
-        "camera_workload_screen": {
-          "drop_rates": [
-            0.005
-          ],
-          "trim_modes": [
-            "off",
-            "on"
-          ],
-          "seeds": 3,
-          "algorithms": [
-            "pfld",
-            "rss_rack_tlp"
-          ]
-        },
-        "promoted_probe_ablation": {
-          "drop_rates": [
-            0.005
-          ],
-          "trim_modes": [
-            "off",
-            "on"
-          ],
-          "seeds": 12,
-          "algorithms": [
-            "pfld",
-            "pfld_probe1_accept_promoted"
           ]
         }
       }

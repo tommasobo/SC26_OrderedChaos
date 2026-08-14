@@ -923,7 +923,7 @@ void UecSink::processTrimmed(const UecDataPacket& pkt) {
             }
         } else if (_pflr3_receive_bitmap.empty()) {
             // Legacy behavior for configurations that do not request the
-            // host-only optimization.
+            // receiver-side optimization.
             UecNackPacket* nack_packet = nack(pkt.path_id(), pkt.epsn());
             _nic.sendControlPacket(nack_packet, NULL, this);
         } else {

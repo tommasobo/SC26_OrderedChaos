@@ -219,7 +219,7 @@ public:
     void           processProbe(UecDataPacket& pkt);
     void           pflrSendNack(UecBasePacket::seq_t seq_no, uint16_t ev);
     static int32_t _pflr_scheme_id;
-    // Host-only trim/probe validation and coalescing. A trim that is the
+    // Receiver-side trim/probe validation and coalescing. A trim that is the
     // first loss evidence initializes and marks the existing NACK bitmap, so
     // the later ordinary proactive probe cannot emit a duplicate NACK. A
     // probe promoted into the high-priority header queue is ignored because

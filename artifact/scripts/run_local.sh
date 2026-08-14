@@ -66,7 +66,7 @@ figure12_id="${run_id}-figure12"
 camera_id="${run_id}-camera"
 camera_plot_id="${run_id}-camera-plot"
 camera_incast_id="${run_id}-camera-incast"
-camera_followups_id="${run_id}-camera-host-followups"
+camera_followups_id="${run_id}-camera-probe-followups"
 collect_id="${run_id}-collect"
 
 run_step "${fetch_id}" artifact/slurm/fetch_inputs.sbatch
@@ -93,7 +93,7 @@ run_step "${camera_id}" artifact/slurm/camera_ready_new_images.sbatch
 export RAW_JOB_ID="${camera_id}"
 run_step "${camera_plot_id}" artifact/slurm/analyze_camera_ready_new_images.sbatch
 run_step "${camera_incast_id}" artifact/slurm/camera_ready_incast.sbatch
-run_step "${camera_followups_id}" artifact/slurm/camera_ready_host_only_followups.sbatch
+run_step "${camera_followups_id}" artifact/slurm/camera_ready_probe_followups.sbatch
 
 export ANALYTICAL_JOB="${analytical_id}"
 export FIG1A_JOB="${figure1a_id}"

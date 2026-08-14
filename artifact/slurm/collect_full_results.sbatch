@@ -126,7 +126,7 @@ copy_pair \
     "Camera_Ready_New_Image_2_Linear" \
     "${EXTRA_FIGURES}"
 copy_pair \
-    "${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${CAMERA_FOLLOWUPS_JOB}/probe_ablation/camera_ready_probe_ablation" \
+    "${SCRATCH}/orderedchaos_ae/analysis/camera-probe-followups-${CAMERA_FOLLOWUPS_JOB}/probe_ablation/camera_ready_probe_ablation" \
     "Camera_Ready_Probe_Ablation" \
     "${EXTRA_FIGURES}"
 cp \
@@ -163,7 +163,7 @@ cp \
     printf 'camera_ready=%s\n' "${CAMERA_JOB}"
     printf 'camera_ready_analysis=%s\n' "${CAMERA_PLOT}"
     printf 'camera_ready_incast=%s\n' "${CAMERA_INCAST_JOB}"
-    printf 'camera_host_followups=%s\n' "${CAMERA_FOLLOWUPS_JOB}"
+    printf 'camera_probe_followups=%s\n' "${CAMERA_FOLLOWUPS_JOB}"
 } > "${RESULTS}/run.txt"
 
 if [[ -s "${SKIPPED_SUMMARY}" ]]; then

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=oc_host_followups
+#SBATCH --job-name=oc_probe_followups
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
@@ -17,9 +17,9 @@ if [[ ! -x "${PYTHON}" ]]; then
     exit 2
 fi
 
-ROOT="${SCRATCH}/orderedchaos_ae/raw/camera-host-followups-${SLURM_JOB_ID}"
-ANALYSIS="${SCRATCH}/orderedchaos_ae/analysis/camera-host-followups-${SLURM_JOB_ID}"
-MEASURE="${SCRATCH}/orderedchaos_ae/measurements/camera-host-followups-${SLURM_JOB_ID}"
+ROOT="${SCRATCH}/orderedchaos_ae/raw/camera-probe-followups-${SLURM_JOB_ID}"
+ANALYSIS="${SCRATCH}/orderedchaos_ae/analysis/camera-probe-followups-${SLURM_JOB_ID}"
+MEASURE="${SCRATCH}/orderedchaos_ae/measurements/camera-probe-followups-${SLURM_JOB_ID}"
 WORKERS="${ORDEREDCHAOS_WORKERS:-${SLURM_CPUS_PER_TASK:-16}}"
 BINARY="${ORDEREDCHAOS_BINARY:?Set ORDEREDCHAOS_BINARY}"
 mkdir -p "${ANALYSIS}" "${MEASURE}"

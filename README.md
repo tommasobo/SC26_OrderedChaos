@@ -24,20 +24,10 @@ and is convenient for the short check on a laptop or workstation. Slurm is
 recommended for the full workflow because independent experiment groups can
 run concurrently. Neither backend requires a GPU.
 
-This host-only artifact uses one freshly built simulator binary for every
-baseline. Its switch and queue sources are byte-identical to the earlier main
-revision `e20b7dd`; it retains the existing `-no_droping_low_header`
-configuration but does not add the switch-assisted variant's reserved probe
-FIFO or switch-side coalescing.
-At the receiver, explicit trim evidence is recorded in the existing PFLD NACK
-bitmap so that the following ordinary proactive probe cannot generate a
-duplicate NACK. A probe promoted out of the low FIFO is rejected as unsafe
-ordering evidence because it may have overtaken its named packet;
-retransmission probes remain able to refresh a NACK if the repair is also
-lost. At the sender, retransmissions are sent before optional probes. Figures
-7--12 and both camera-ready experiments use a proactive probe
-interval of one data packet (`X=1`); experiments outside that scope retain the
-original artifact configuration. These choices are recorded in
+All experiments use one freshly built simulator binary. This artifact
+evaluates the end-host implementation and does not include the optional
+switch-assisted reserved probe FIFO or switch-side coalescing. Complete
+experiment parameters are recorded in
 `artifact/config/paper_experiments.json`.
 
 Archived artifact: [https://doi.org/10.5281/zenodo.21542397](https://doi.org/10.5281/zenodo.21542397)
@@ -84,7 +74,7 @@ ORDEREDCHAOS_JOBS=4 ./reproduce.sh short
 
 Generated plots are placed in `results/short-<run-id>` or
 `results/full-<run-id>`. Successful runs contain a `PASS` file.
-The full workflow also regenerates the host-only section/tail compounding and
+The full workflow also regenerates the section/tail compounding and
 32-to-1 periodic-probe stress studies. All supplementary camera-ready outputs
 are collected under `results/full-<run-id>/ExtraFigures/`: the Google RPC FCT
 distributions, the timeout-event plots, and the two-panel probe-ablation

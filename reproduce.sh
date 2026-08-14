@@ -208,7 +208,7 @@ camera_plot=$(submit --dependency="afterok:${camera_job}" \
 camera_incast_job=$(submit --dependency="afterok:${build_job}" \
     artifact/slurm/camera_ready_incast.sbatch)
 camera_followups_job=$(submit --dependency="afterok:${build_job}" \
-    artifact/slurm/camera_ready_host_only_followups.sbatch)
+    artifact/slurm/camera_ready_probe_followups.sbatch)
 
 final_dependencies="${analytical_job}:${figure1a_job}:${figure1b_job}:${figure6_plot}"
 final_dependencies+=":${micro_plot}:${figure10_job}:${figure9_job}:${figure13_job}:${figure8_job}"
